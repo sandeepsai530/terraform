@@ -1,0 +1,21 @@
+Manual Infra:
+- Time
+- Human errors
+- cost
+- Reusable effort
+- Dont know who did mistake
+- Modifications are not easy
+- Not scalable
+
+Version control can be achieved by using Terraform like infra-1.0 , infra-2.0
+previous version can be restored in less time if something is wrong.
+Inventory management - you can understand the resources by seeing terraform files.
+Dependency Management - Terraform can understand the dependency between resources. First it will create dependencies and then actual resources.
+Code reusable - terraform modules, you can create similar infra for any number of projects using modules.
+Cost - automation of CRUD - we can create the resources when their is need. By this we can save cost.
+state management
+declarative - easy syntax
+GIT - you can review code before apply.
+
+Access Key: AKIAW5WU5HA66JWMRH36
+Secret key: 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
