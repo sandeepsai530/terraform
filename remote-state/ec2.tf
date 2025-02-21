@@ -7,6 +7,7 @@ resource "aws_instance" "this" {
     Purpose ="Terraform-practice"
   }
 }
+
 resource "aws_security_group" "allow_tls" {
     name = "allow_tls"
     description = "allow tls inbound traffic and all outbound traffic"

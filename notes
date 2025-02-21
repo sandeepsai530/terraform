@@ -1,0 +1,141 @@
+Topics to cover:
+- why terraform? advantages
+- variables
+    variables.tf
+    terraform.tfvars
+    command line
+    ENV variables
+- conditions -> expression ? "true-value : "false-value"
+- loops -> count based, for each, dynamic blocks
+- functions
+- data sources -> query existing information
+- output
+- locals -> store expressions in a variable
+- state and remote state with locking
+- provisioners -> local-exec and remote-exec
+- multiple environments -> tfvars
+
+Data sources:
+-------------
+-> data sources are used to query existing information from the provider
+-> data sources in terraform are used to get information about resources external to terraform and uses them to set up your terraform resources.
+
+types variables that we can pass:
+1. command line -> -var "<instance_type=t2.micro" or -var "<var-name>=<var-value>"
+2. tfvars
+3. env var
+4. default values
+5. user prompt
+
+conditions:
+if else, when
+
+if(expression) {
+  this statement runs if expression is true
+}
+else {
+  this statement runs if expression is false
+}
+
+expression ? "this runs if true" : "this runs if false"
+example:  instance_type = var.environment == "prod" ? "t3.small" : "t2.micro"
+
+loops:
+1. count based loops
+2. for each loops
+3. dynamic blocks
+
+interpolation: concating two variables with text
+
+output blocks are used to print the information. it will be used in module develeopment too.
+
+locals:
+-------
+Locals are used to run expressions or functions and save the results to variables.
+
+LOCALS vs VARIABLES:
+--------------------
+locals are used to store expressions, it can even store simple key value pairs just like variables.
+variables can't store expressions. variables can't refer other variable. locals can refer other locals or variables.
+variables can be overriden. locals can't be overriden. 
+
+State Management:
+-----------------
+declared/desired infra -> .tf files. whatever user write in tf files, that is what user wants.
+actual infra -> what terraform is creating in provider.
+
+desired infra == actual infra
+
+terraform.tfstate -> it is a file terraform creates to know what it is created. this is actual infra created by terraform.
+
+someone changed the name of ec2 manually inside console.
+terraform plan or apply
+terraform reads state file and then compare that with actual infra using provider.
+
+if you update tf files...
+terraform.tfstate -> expense-dev-backend
+compared with tf files -> expense-dev-backend-changed
+
+if you update few parameters, resources will not be created again it iwll just update
+but few parameters if you update, we are forced to recreate resources.
+
+tfstate is very important file, we need to secure it.
+
+clone terraform repo -> terraform apply
+duplicate resources or errors
+
+in collaboration environment we must maintain state file remotely.
+locking is important, so that we can prevent parallel execution.
+
+Dynamic blocks:
+---------------
+loops are used to create multiple resources.
+dynamic blocks are used to create multiple blocks inside a resource.
+
+Loops:
+------
+1-count based loops: use it to iterate lists
+2-for each loop: use it to iterate maps
+3-dynamic blocks:
+
+provisioners:
+-------------
+provisioners are used to take some action either locally or remote when terraform created servers
+2 type of provisioners:
+1-local-exec
+2-remote-exec
+
+we can use provisoners either creation time or destroy time.
+
+local -> where terraform command is running that is local
+remote -> inside the server created by terraform
+
+multiple environemnts using terraform:
+--------------------------------------
+1.tfvars -> used to override default values
+2.workspaces
+3.seperate codebase
+
+DEV and PROD, remote state use
+
+expense-dev-mysql -> mysql-dev.saisandeep-devops.xyz
+expense-dev-backend -> backend-dev.saisandeep-devops.xyz
+expense-dev-frontend -> frontend-dev.saisandeep-devops.xyz
+
+expense-prod-mysql -> mysql-prod.saisandeep-devops.xyz
+expense-prod-backend -> backend-prod.saisandeep-devops.xyz
+expense-prod-frontend -> frontend-prod.saisandeep-devops.xyz
+
+expense-dev or expense-prod
+
+using TFVARS:
+-------------
+terraform init -reconfigure -backend-config=dev/backend.tf  --> for dev
+terraform plan -var-file=dev/dev.tfvars
+terraform apply -var-file=dev/dev.tfvars
+terraform destroy -var-file=dev/dev.tfvars
+
+terraform init -reconfigure -backend-config=prod/backend.tf  --> for prod
+terraform plan -var-file=dev/dev.tfvars
+terraform apply -var-file=prod/prod.tfvars
+terraform destroy -var-file=prod/prod.tfvars
