@@ -7,7 +7,7 @@ resource "aws_route53_record" "expense" {
   records = [aws_instance.expense[count.index].private_ip]
 }
 
-resource "aws_route53_record" "expense" {
+resource "aws_route53_record" "frontend" {
   zone_id = var.zone_id
   name    = "${var.instance[2]}.${var.domain_name}"  #interpolation
   type    = "A"
