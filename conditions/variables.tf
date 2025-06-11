@@ -31,8 +31,8 @@ variable "ec2_tags" {
   default = {
     Project = "expense"
     Component = "backend"
-    Environment = "dev"
-    Name = "expense-backend-dev"
+    Environment = "prod"
+    Name = "expense-backend-prod"
   }
 }
 
