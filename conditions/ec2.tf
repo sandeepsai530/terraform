@@ -1,6 +1,6 @@
 resource "aws_instance" "this" {
     ami = var.ami_id
-    instance_type = var.instance_type
+    instance_type = var.environment == "prod" ? "t3.micro" : "t3.small"
     vpc_security_group_ids = [ aws_security_group.allow_tls.id ]
     tags = {
       Name = "terraform-conditions"
@@ -27,4 +27,4 @@ resource "aws_security_group" "allow_tls" {
     tags = {
       Name = "terraform-sg"
     }
-}
+} 
