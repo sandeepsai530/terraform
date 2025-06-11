@@ -20,11 +20,20 @@ Number of ways variables can be defined:
     - terraform.tfvars
     - Inline with CLI (terraform apply -var="instance_type=t2.small")
     - ENV variables (export TF_VAR_instance_type=t2.medium)
+    - command prompt
     - modules
     - Locals
       Ex: locals {
             app_name = "${var.project}-${var.environment}"
           }
+
+  prefernce of variables:
+  - command line (-var="instance_type=t2.small")
+  - tfvars
+  - env var
+  - default values
+  - user prompt/command prompt
+
 
 - conditions -> expression ? "true-value : "false-value"
 - loops -> count based, for each, dynamic blocks
