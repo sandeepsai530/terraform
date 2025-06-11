@@ -17,6 +17,7 @@ data "aws_ami" "joindevops" {
     values = ["hvm"]
   }
 }
+#fetching default VPC for my account in console output
 
 data "aws_vpc" "default" {
   default = true
