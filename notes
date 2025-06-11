@@ -14,12 +14,18 @@ variable "<variable-name>" {
   type = ""
   default= ""
 }
-
 number,string,bool,map,list
-    - variables.tf
+Number of ways variables can be defined:
+    - variables.tf 
     - terraform.tfvars
-    - command line
-    - ENV variables
+    - Inline with CLI (terraform apply -var="instance_type=t2.small")
+    - ENV variables (export TF_VAR_instance_type=t2.medium)
+    - modules
+    - Locals
+      Ex: locals {
+            app_name = "${var.project}-${var.environment}"
+          }
+
 - conditions -> expression ? "true-value : "false-value"
 - loops -> count based, for each, dynamic blocks
 - functions
