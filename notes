@@ -1,11 +1,12 @@
 Topics to cover:
 - why terraform? advantages
-terraform coomads:
-terraform init
-terraform plan
-terraform validate
-terraform apply
-terraform destroy
+terraform commands:
+terraform init - Initializes working directory(downloads required files like provider), its first cmd.
+terraform plan - shows what changes terraform will make without applyig them.
+terraform validate - checks whether the cnfiguration is syntactically valid. Terraform validate is included in terraform apply
+terraform apply - Applies the changes to your infra. will prompt for approvals unless -auto-approve used.
+terraform destroy - Tears down all resources defined in the current configuration.
+terraform fmt - Formats .tf files to the canonical style.
 
 - variables
     variables.tf
