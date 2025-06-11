@@ -8,11 +8,12 @@ terraform apply - Applies the changes to your infra. will prompt for approvals u
 terraform destroy - Tears down all resources defined in the current configuration.
 terraform fmt - Formats .tf files to the canonical style.
 
-- variables
-    variables.tf
-    terraform.tfvars
-    command line
-    ENV variables
+variables:
+-----------
+    - variables.tf
+    - terraform.tfvars
+    - command line
+    - ENV variables
 - conditions -> expression ? "true-value : "false-value"
 - loops -> count based, for each, dynamic blocks
 - functions
