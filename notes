@@ -37,7 +37,7 @@ Number of ways variables can be defined:
 
 - conditions -> expression ? "true-value : "false-value"
 - loops -> count based, for each, dynamic blocks
-- functions
+- functions - max, length, split, merge, join, lower, upper
 - data sources -> query existing information
 - output
 - locals -> store expressions in a variable

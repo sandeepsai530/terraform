@@ -9,3 +9,11 @@ variable "zone_id" {
 variable "domain_name" {
   default = "saisandeep-devops.xyz"
 }
+
+variable "common_tags" {
+  type = map
+  default = {
+    Project = "expense"
+    Environment = "dev"
+  }
+}
