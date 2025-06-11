@@ -1,41 +1,41 @@
 variable "ami_id" {
-    type = "string"
-    default = "ami-09c813fb71547fc4f"
-    description = "this is RHEL9 ami"
+  type        = string
+  default     = "ami-09c813fb71547fc4f"
+  description = "this is RHEL9 ami"
 }
 
 variable "instance_type" {
-  type = "string"
+  type    = string
   default = "t2.micro"
 }
 
 variable "ec2_tags" {
-  type = "map"
+  type = map(any)
   default = {
-    project = "expense"
-    component = "backend"
+    project     = "expense"
+    component   = "backend"
     environment = "dev"
-    Name = "expense-backend"
+    Name        = "expense-backend"
   }
 }
 
 variable "from_port" {
-    type = "number"
+  type    = number
   default = 22
 }
 
 variable "to_port" {
-    type = "number"
+  type    = number
   default = 22
 }
 
 variable "cidr_blocks" {
-  type = list(string)
-  default = [ "0.0.0.0/0" ]
+  type    = list(string)
+  default = ["0.0.0.0/0"]
 }
 
 variable "sg_tags" {
-  type = "map"
+  type = map(any)
   default = {
     Name = "expense-backend"
   }
