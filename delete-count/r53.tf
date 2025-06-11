@@ -4,5 +4,5 @@ resource "aws_route53_record" "expense" {
   name    = "${var.instance[count.index]}.${var.domain_name}"  #interpolation
   type    = "A"
   ttl     = 1
-  records = [aws_instance.instance[count.index].private_ip]
+  records = [aws_instance.expense[count.index].private_ip]
 }
