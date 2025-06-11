@@ -1,27 +1,30 @@
 resource "aws_instance" "this" {
-  ami = var.ami_id
-  vpc_security_group_ids = [aws_security_group.allow_tls.id]
-  instance_type = var.environment == "prod" ? "t3.small" : "t2.micro"
-  tags = var.ec2_tags
+    ami = "ami-09c813fb71547fc4f"
+    instance_type = "t2.micro"
+    vpc_security_group_ids = [ aws_security_group.allow_tls.id ]
+    tags = {
+      Name = "terraform-conditions"
+    }
 }
 
 resource "aws_security_group" "allow_tls" {
     name = "allow_tls"
-    description = "allow tls inbound traffic and all outbound traffic"
 
-    ingress {
-        from_port = var.from_port
-        to_port = var.to_port
+    ingress = {
+        from_port = 22
+        to_port = 22
         protocol = "tcp"
-        cidr_blocks = var.cidr_blocks
+        cidr_blocks = ["0.0.0.0/0"]
     }
 
-    egress {
+    egress = {
         from_port = 0
         to_port = 0
         protocol = "-1"
         cidr_blocks = ["0.0.0.0/0"]
     }
-    
-    tags = var.sg_tags
+
+    tags = {
+      Name = "terraform-sg"
+    }
 }
