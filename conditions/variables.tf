@@ -4,7 +4,7 @@ variable "ami_id" {
 }
 
 variable "environment" {
-  default = "dev"
+  default = "prod"
 }
 variable "instance_type" {
     type = string
@@ -31,8 +31,8 @@ variable "ec2_tags" {
   default = {
     Project = "expense"
     Component = "backend"
-    Environment = "prod"
-    Name = "expense-backend-prod"
+    Environment = "dev"
+    Name = "expense-backend-dev"
   }
 }
 
