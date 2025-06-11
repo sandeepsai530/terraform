@@ -1,5 +1,12 @@
 Topics to cover:
 - why terraform? advantages
+terraform coomads:
+terraform init
+terraform plan
+terraform validate
+terraform apply
+terraform destroy
+
 - variables
     variables.tf
     terraform.tfvars
