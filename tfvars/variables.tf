@@ -26,6 +26,6 @@ variable "common_tags" {
   }
 }
 
-variable "profile" {
+/* variable "profile" {
   
-}
+} */
