@@ -75,9 +75,15 @@ loops:
 2. for each loops
 3. dynamic blocks
 
+Count vs for-each:
+count - when you need N identical resources.
+for-each: when you have a collection of named or uniquely configured resources.
+    When you want more control or to create resources based on a map or set of values, you use for_each.
+
+
 interpolation: concating two variables with text
 
-output blocks are used to print the information. it will be used in module develeopment too.
+Output blocks: These are used to print the information. it will be used in module develeopment too.
 
 locals:
 -------
@@ -88,6 +94,19 @@ LOCALS vs VARIABLES:
 locals are used to store expressions, it can even store simple key value pairs just like variables.
 variables can't store expressions. variables can't refer other variable. locals can refer other locals or variables.
 variables can be overriden. locals can't be overriden. 
+Example for locals:
+locals {
+  instance_type = "t3.micro"
+}
+
+instance_type = local.instance_type
+
+Example for variables:
+variable "instance_type" {
+  default = "t3.micro"
+}
+
+instance_type=var.instance_type
 
 State Management:
 -----------------
