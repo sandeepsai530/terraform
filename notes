@@ -125,7 +125,7 @@ if you update tf files...
 terraform.tfstate -> expense-dev-backend
 compared with tf files -> expense-dev-backend-changed
 
-if you update few parameters, resources will not be created again it iwll just update
+if you update few parameters, resources will not be created again it will just update
 but few parameters if you update, we are forced to recreate resources.
 
 tfstate is very important file, we need to secure it.
@@ -158,6 +158,9 @@ we can use provisoners either creation time or destroy time.
 
 local -> where terraform command is running that is local
 remote -> inside the server created by terraform
+
+when = destroy # terraform remote provisioners can be used either while creating or destroying.
+# if nothing was mentioned then it will consider to eexcute the provisioner during the execution.
 
 multiple environemnts using terraform:
 --------------------------------------
