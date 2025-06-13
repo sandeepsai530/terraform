@@ -34,6 +34,15 @@ Number of ways variables can be defined:
   - default values
   - user prompt/command prompt
 
+if declared as below the n variable is considered as mandatory
+variable "sg_id" {
+}
+
+if declared as below the n variable is considered as optional
+variable "tags" {
+  default = {}
+}
+
 
 - conditions -> expression ? "true-value : "false-value"
 - loops -> count based, for each, dynamic blocks
