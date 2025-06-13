@@ -54,6 +54,16 @@ variable "tags" {
 - provisioners -> local-exec and remote-exec
 - multiple environments -> tfvars
 
+#conditions in terraform
+please refer session-27 in joindevops
+variable "instance_type" {
+  default = "t2.micro" 
+  validation {
+    condition = contains(["t3.micro", "t3.small", "t3.medium"], var.instance_type)
+    error_message = "valid values for instance type are: t3.small/t3.micro/t3.medium"
+  }
+}
+
 Data sources:
 -------------
 -> data sources are used to query existing information from the provider
@@ -195,6 +205,8 @@ terraform modules:
 variables, functions, ansible roles, locals.
 
 modules: it is like functions, you can pass inputs you will get infra.
+
+** In terraform modules, if you need to access variables then that has to be given in outputs.tf then it can be accessible.
 
 
 
