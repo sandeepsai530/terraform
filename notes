@@ -166,7 +166,28 @@ multiple environemnts using terraform:
 --------------------------------------
 1.tfvars -> used to override default values
 2.workspaces
-3.seperate codebase
+3.seperate codebase - maintain different repos for different environment.
+
+its better to use seperate codebase as other two ways create confusion while creating the resources.
+
+Disadvantages of tfvars/workspaces:
+should be very careful, because same code to prod also, any mistake in dev causes confusion in prod.
+should have full expertise, too much testing.
+
+Advantages:
+code reuse
+
+Disadvantages with seperate codebase:
+multiple repos to manage
+we may be multiple employees
+Code reuse can be achieved with the help of modules.
+
+terraform modules:
+variables, functions, ansible roles, locals.
+
+modules: it is like functions, you can pass inputs you will get infra.
+
+
 
 DEV and PROD, remote state use
 
