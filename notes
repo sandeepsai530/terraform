@@ -12,10 +12,12 @@ terraform fmt - Formats .tf files to the canonical style.
 
 variables:
 -----------
+syntax:
 variable "<variable-name>" {
   type = ""
   default= ""
 }
+
 number,string,bool,map,list
 Number of ways variables can be defined:
     - variables.tf 

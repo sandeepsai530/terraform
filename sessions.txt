@@ -3,3 +3,10 @@ session-23:
 introduction to Terraform
 creation of EC2 and Security Group
 
+session-24:
+-----------
+indetail about variables
+types of variables and priority while apply
+
+
+
