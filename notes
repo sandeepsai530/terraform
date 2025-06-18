@@ -98,7 +98,8 @@ Count vs for-each:
 count - when you need N identical resources.
 for-each: when you have a collection of named or uniquely configured resources.
     When you want more control or to create resources based on a map or set of values, you use for_each.
-
+    access each item using each.key and each.value.
+    useful for creating multiple similar resources without repeating code.
 
 interpolation: concating two variables with text
 
