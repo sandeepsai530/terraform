@@ -1,0 +1,5 @@
+session-23:
+-----------
+introduction to Terraform
+creation of EC2 and Security Group
+
