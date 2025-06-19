@@ -12,7 +12,7 @@ variable "ec_tags" {
   default = {
     project     = "expense"
     component   = "backend"
-    Environment = "dev"
+    Environment = "prod"
     Name        = "expense-backend-dev"
   }
 }
@@ -22,4 +22,8 @@ variable "sg_tags" {
   default = {
     Name = "terraform-sg"
   }
+}
+
+variable "Environment" {
+  default = "prod"
 }

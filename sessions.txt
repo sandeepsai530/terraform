@@ -7,6 +7,4 @@ session-24:
 -----------
 indetail about variables
 types of variables and priority while apply
-
-
-
+conditions

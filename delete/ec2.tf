@@ -1,6 +1,6 @@
 resource "aws_instance" "expense" {
   ami                    = var.ami_id
-  instance_type          = var.instance_type
+  instance_type = var.Environment == "prod" ? "t2.medium" : "t2.micro"
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
 
   tags = var.ec_tags

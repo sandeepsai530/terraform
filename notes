@@ -49,6 +49,7 @@ variable "tags" {
 
 
 - conditions -> expression ? "true-value : "false-value"
+  Example: instance_type = var.Environment == "prod" ? "t2.medium" : "t2.micro"
 - loops -> count based, for each, dynamic blocks
 - functions - max, length, split, merge, join, lower, upper
 - data sources -> query existing information
