@@ -50,11 +50,27 @@ variable "tags" {
 
 - conditions -> expression ? "true-value : "false-value"
   Example: instance_type = var.Environment == "prod" ? "t2.medium" : "t2.micro"
+
 - loops -> count based, for each, dynamic blocks
 - functions - max, length, split, merge, join, lower, upper
 - data sources -> query existing information
+  Example:
+  data "aws_ami" "joindevops" {
+  most_recent = true
+  owners = ["973714476881"]
+
+  filter {
+    name = "name"
+    values = ["RHEL-9-DevOps-Practice"]
+  }
+}
+
 - output
 - locals -> store expressions in a variable
+  Example:
+  locals {
+  ami_id = data.aws_ami.joindevops.id
+}
 - state and remote state with locking
 - provisioners -> local-exec and remote-exec
 - multiple environments -> tfvars
@@ -112,7 +128,12 @@ Output blocks: These are used to print the information. it will be used in modul
 
 locals:
 -------
-Locals are used to run expressions or functions and save the results to variables.
+Locals are used to run expressions or functions and save the results to variables. refer below
+session-25: 19mins
+Example:
+locals {
+  ami_id = data.aws_ami.joindevops.id
+}
 
 LOCALS vs VARIABLES:
 --------------------

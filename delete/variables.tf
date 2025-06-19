@@ -1,7 +1,7 @@
-variable "ami_id" {
+/* variable "ami_id" {
   type    = string
   default = "ami-09c813fb71547fc4f"
-}
+} */
 
 variable "instance_type" {
   default = "t2.micro"
@@ -18,12 +18,21 @@ variable "ec_tags" {
 }
 
 variable "sg_tags" {
-  type = map(any)
+  type = map
   default = {
     Name = "terraform-sg"
   }
 }
 
-variable "Environment" {
-  default = "prod"
+variable "instance_name" {
+    type = list 
+  default = ["mysql", "backend", "frontend"]
+} 
+
+variable "project" {
+  default = "expense"
+}
+
+variable "component" {
+  default = "backend"
 }

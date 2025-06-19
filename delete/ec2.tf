@@ -1,9 +1,14 @@
 resource "aws_instance" "expense" {
-  ami                    = var.ami_id
-  instance_type = var.Environment == "prod" ? "t2.medium" : "t2.micro"
+  count                  = length(var.instance_name)
+  //ami                    = data.aws_ami.joindevops.id
+  ami = local.ami_id
+  instance_type          = "t2.micro"
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
 
-  tags = var.ec_tags
+  tags = {
+    Name    = local.instance_tags[count.index]
+    purpose = "terraform-practice"
+  }
 }
 
 resource "aws_security_group" "allow_tls" {
