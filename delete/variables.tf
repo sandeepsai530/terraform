@@ -26,13 +26,13 @@ variable "sg_tags" {
 
 variable "instance_name" {
     type = list 
-  default = ["mysql", "backend", "frontend"]
+  default = ["mysqls", "backend", "frontend"]
 } 
 
 variable "project" {
   default = "expense"
 }
 
-variable "component" {
-  default = "backend"
+variable "environment" {
+  default = "dev"
 }
