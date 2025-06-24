@@ -20,3 +20,6 @@ session-26:
 -----------
 Dynamic blocks
 for_each
+provisoners - local exec and remote exec
+multiple environments in terraform - tfvars,workspaces, seperate codebase
+
