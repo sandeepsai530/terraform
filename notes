@@ -196,6 +196,13 @@ Loops:
 provisioners:
 -------------
 provisioners are used to take some action either locally or remote when terraform created servers
+Creation time:
+By default, provisioners run when the resource they are defined within is created.
+provisioners are only run during creation, not during update or anyother lifecycle.
+
+destroy time:
+if when = destroy is specified, the provisioner will run when the resource is defined within is destroyed
+By default it takes when = creation time if nothing was mentioned
 2 type of provisioners:
 1-local-exec
 2-remote-exec

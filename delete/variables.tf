@@ -25,8 +25,12 @@ variable "sg_tags" {
 }
 
 variable "instance_name" {
-    type = list 
-  default = ["mysqls", "backend", "frontend"]
+    type = map  
+  default = {
+    mysql = "t3.small"
+    backend = "t3.micro"
+    frontend = "t3.small"
+    }
 } 
 
 variable "project" {
@@ -35,4 +39,12 @@ variable "project" {
 
 variable "environment" {
   default = "dev"
+}
+
+variable "zone_id" {
+  default = "Z0920272EA0FSP8H70OY"
+}
+
+variable "domain_name" {
+  default = "saisandeep-devops.xyz"
 }

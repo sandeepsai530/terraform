@@ -8,3 +8,15 @@ session-24:
 indetail about variables
 types of variables and priority while apply
 conditions
+
+session-25:
+-----------
+locals
+data sources
+conditions
+terraform state locking
+
+session-26:
+-----------
+Dynamic blocks
+for_each

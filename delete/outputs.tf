@@ -2,10 +2,10 @@ output "public_ip_address" {
   value = [for instance in aws_instance.expense : instance.public_ip]
 }
 
-output "ami_id" {
+/* output "ami_id" {
   value = data.aws_ami.joindevops.id
-}
+} */
 
 output "ec2_name" {
   value = var.instance_name
-}
+} 

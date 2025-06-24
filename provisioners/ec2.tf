@@ -6,7 +6,7 @@ resource "aws_instance" "this" {
     Name = "terraform-demo"
     Purpose ="Terraform-practice"
   }
-
+  #this is local exec
   provisioner "local-exec" {
     command = "echo ${self.private_ip} > inventory"
   }
@@ -18,7 +18,7 @@ resource "aws_instance" "this" {
     host = self.public_ip
   }
 
-
+  #this is remote exec
   provisioner "remote-exec" {
     inline = [ 
       "sudo dnf install nginx",
