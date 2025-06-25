@@ -23,3 +23,11 @@ for_each
 provisoners - local exec and remote exec
 multiple environments in terraform - tfvars,workspaces, seperate codebase
 
+session-27:
+-----------
+workspaces
+terraform modules
+
+session-28:
+-----------
+VPC overview manual creation

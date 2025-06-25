@@ -267,3 +267,7 @@ terraform init -reconfigure -backend-config=prod/backend.tf  --> for prod
 terraform plan -var-file=dev/dev.tfvars
 terraform apply -var-file=prod/prod.tfvars
 terraform destroy -var-file=prod/prod.tfvars
+
+NAT Gateway:
+If you want to enable egress internet to the servers in private subnet, you should create NAT gateway in
+public subnet and provide route to private subnets
