@@ -31,6 +31,34 @@ variable "public_subnet_cidrs" {
   type = list 
   validation {
     condition = length(var.public_subnet_cidrs) == 2
-    error_message = "please provide 2 valid CIDR's"
+    error_message = "please provide 2 valid public CIDR's"
   }
+}
+
+ variable "private_subnet_tags" {
+  default = {}
+} 
+
+variable "private_subnet_cidrs" {
+  type = list 
+  validation {
+    condition = length(var.private_subnet_cidrs) == 2
+    error_message = "please provide 2 valid private CIDR's"
+  }
+}
+
+ variable "database_subnet_tags" {
+  default = {}
+} 
+
+variable "database_subnet_cidrs" {
+  type = list 
+  validation {
+    condition = length(var.database_subnet_cidrs) == 2
+    error_message = "please provide 2 valid database CIDR's"
+  }
+}
+
+variable "nat_gw_tags" {
+  default = {}
 }

@@ -23,8 +23,8 @@ resource "aws_internet_gateway" "main" {
     }
   )
 }
-#expense-dev-us-east-1a
- resource "aws_subnet" "main" {
+#expense-dev-public-us-east-1a
+ resource "aws_subnet" "public" {
   count = length(var.public_subnet_cidrs)
   vpc_id = aws_vpc.main.id
   cidr_block = var.public_subnet_cidrs[count.index]
@@ -39,3 +39,54 @@ resource "aws_internet_gateway" "main" {
     }
   )
 } 
+
+#expense-dev-private-us-east-1a
+ resource "aws_subnet" "private" {
+  count = length(var.private_subnet_cidrs)
+  vpc_id = aws_vpc.main.id
+  cidr_block = var.private_subnet_cidrs[count.index]
+  availability_zone = local.az_name[count.index]
+
+  tags = merge(
+    var.common_tags,
+    var.private_subnet_tags,
+    {
+      Name = "${local.resource_name}-private-${local.az_name[count.index]}"
+    }
+  )
+} 
+
+#expense-dev-database-us-east-1a
+ resource "aws_subnet" "database" {
+  count = length(var.database_subnet_cidrs)
+  vpc_id = aws_vpc.main.id
+  cidr_block = var.database_subnet_cidrs[count.index]
+  availability_zone = local.az_name[count.index]
+
+  tags = merge(
+    var.common_tags,
+    var.database_subnet_tags,
+    {
+      Name = "${local.resource_name}-database-${local.az_name[count.index]}"
+    }
+  )
+} 
+
+resource "aws_eip" "nat" {
+  domain = "vpc"
+}
+
+resource "aws_nat_gateway" "name" {
+  allocation_id = aws_eip.nat.id
+  subnet_id = aws_subnet.public[0].id
+
+  tags = merge(
+    var.common_tags,
+    var.nat_gw_tags,
+    {
+      Name = local.resource_name
+    }
+  )
+
+  depends_on = [ aws_internet_gateway.main ]
+}
