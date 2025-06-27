@@ -1,5 +1,5 @@
 #expense-dev-mysql
-resource "aws_security_group" "allow_tls" {
+resource "aws_security_group" "main" {
   name = local.sg_final_name
   description = var.sg_description
   vpc_id = var.vpc_id 
