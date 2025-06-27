@@ -31,3 +31,4 @@ terraform modules
 session-28:
 -----------
 VPC overview manual creation
+created basic VPC module
