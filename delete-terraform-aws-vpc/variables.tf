@@ -62,3 +62,15 @@ variable "database_subnet_cidrs" {
 variable "nat_gw_tags" {
   default = {}
 }
+
+variable "public_rt_tags" {
+  default = {}
+}
+
+variable "private_rt_tags" {
+  default = {}
+}
+
+variable "database_rt_tags" {
+  default = {}
+}
