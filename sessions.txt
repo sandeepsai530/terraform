@@ -42,3 +42,7 @@ session-30:
 revised VPC module
 created SG module
 discussed one realtime issue that can be discussed @48:00
+ssm parameter
+
+session-31:
+-----------
