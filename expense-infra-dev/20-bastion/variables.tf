@@ -12,5 +12,4 @@ variable "common_tags" {
     environment = "dev"
     terraform = "true"
   }
-}
-
+} 
