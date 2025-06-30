@@ -271,3 +271,9 @@ terraform destroy -var-file=prod/prod.tfvars
 NAT Gateway:
 If you want to enable egress internet to the servers in private subnet, you should create NAT gateway in
 public subnet and provide route to private subnets
+NAT gateway is for out going traffic
+
+Bastion host:
+when you try to connect private servers like backend and database, we need to use bastion host.
+Bastion host is a secure, publicly accessible server that acts as a gateway for accessing private 
+resources like EC2 instances inside a private subnet of a VPC.

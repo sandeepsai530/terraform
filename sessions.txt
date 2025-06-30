@@ -46,3 +46,6 @@ ssm parameter
 
 session-31:
 -----------
+join function to convert from list to stringlist @15:00
+creation of bastion host - bit confusing practice again
+loadbalancer discussion
