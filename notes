@@ -1,3 +1,6 @@
+Linux:
+du vs df
+
 Topics to cover:
 - why terraform? advantages
 terraform commands:
@@ -277,3 +280,20 @@ Bastion host:
 when you try to connect private servers like backend and database, we need to use bastion host.
 Bastion host is a secure, publicly accessible server that acts as a gateway for accessing private 
 resources like EC2 instances inside a private subnet of a VPC.
+
+Load Balancer:
+ALB -> Listener -> Evaluate rules -> target group -> server
+
+open source modules:
+Advantages:
+- we dont need to write code
+
+Disadvantages:
+- we are dependent on them
+- whenever they update, we are forced to update
+
+organisation module:
+- we have to write complete code
+
+Advantages:
+- fully our control

@@ -49,4 +49,8 @@ session-31:
 **join function to convert from list to stringlist @15:00
 **split function @39:00
 creation of bastion host - bit confusing practice again
-loadbalancer discussion
+loadbalancer discussion with manual creation
+
+session-32:
+-----------
+created app alb
