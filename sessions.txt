@@ -53,4 +53,26 @@ loadbalancer discussion with manual creation
 
 session-32:
 -----------
-created app alb
+created app alb via terraform
+stateful vs stateless discussion
+
+session-33:
+-----------
+VPN and demonstration
+file function
+RDS
+can we install VPN in office laptops @01:27:00
+
+session-34:
+-----------
+creating RDS via terraform
+
+**for i in $(ls -dr *); do cd $i; terraform destroy -auto-approve; cd ..; done 
+
+session-35:
+-----------
+**repeat this session
+null resource
+auto scaling
+developed project using anisble via terraform
+@01:27:00 - explaining detailed flow - repeat again

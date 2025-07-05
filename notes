@@ -1,6 +1,8 @@
 Linux:
 du vs df
 
+connect via ssh - ssh -i ~/downloads/vpn.pem ec2-user@ip-address
+
 Topics to cover:
 - why terraform? advantages
 terraform commands:
@@ -55,7 +57,8 @@ variable "tags" {
   Example: instance_type = var.Environment == "prod" ? "t2.medium" : "t2.micro"
 
 - loops -> count based, for each, dynamic blocks
-- functions - max, length, split, merge, join, lower, upper
+- functions - max, length, split, merge, join, lower, upper, file
+** learn split vs join functions
 - data sources -> query existing information
   Example:
   data "aws_ami" "joindevops" {
@@ -297,3 +300,22 @@ organisation module:
 
 Advantages:
 - fully our control
+
+DB vs RDS:
+----------
+DB:
+- DB installation
+- DB upgrades
+- DB backups
+- DB changes
+- DB cluster setup
+- DB restoration test
+
+RDS:
+- DB installation -> we just need to provide configuration
+- DB upgrades - simple clicks
+- DB snapshots
+- DB cluster -> we can configure replication controllers, high available, storage scalable
+
+what is null resource?
+- it will not create any new resource, it is used to connect to the instances, copy the scripts, execute the scripts through provisioners. it has a trigger attribute to take actions when something is changed like instance id.
