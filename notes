@@ -319,3 +319,42 @@ RDS:
 
 what is null resource?
 - it will not create any new resource, it is used to connect to the instances, copy the scripts, execute the scripts through provisioners. it has a trigger attribute to take actions when something is changed like instance id.
+
+***OSI model:
+----------
+Application layer
+Presentation layer
+session layer
+transport layer
+network layer
+data link layer
+physical layer
+
+-> when you hit www.google.com , what happens in the background?
+Application layer:
+------------------
+application layer hits www.google.com - http/https
+presentation - encryption
+session - session, cookie details
+NOTE: three layers together can be called as application layer
+
+transport layer:
+----------------
+transport - port number
+destination port - 80/443/8080/22
+source port - system randomly allocates one port to get the resposne - ephemeral port
+range: 32768-65535
+
+Network layer:
+--------------
+Network - IP address
+destination IP address - DNS resoultion
+SourceIP - server IP address (private IP)
+Source IP, source port, destination IP, destination port, data -> packet
+
+Data link -> Mac address
+source  mac - laptop mac address
+destination mac - router mac address 
+frame -> data pack and mac address
+
+physical layer - ethernet, wifi

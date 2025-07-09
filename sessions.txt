@@ -76,3 +76,37 @@ null resource
 auto scaling
 developed project using anisble via terraform
 @01:27:00 - explaining detailed flow - repeat again
+
+session-36:
+-----------
+created AMI,Launch template, ASG manually for the expense project
+created AMI,Launch template, ASG using terraform for expense project
+
+session-37:
+-----------
+discussed in detail about configuring database and backend servers with demo.
+implementing ACM using terraform for frontned
+implementing loadbalancer for frontned
+
+session-38:
+-----------
+implementing frontned application along with certificates
+
+session-39:
+-----------
+CDN - Content Delivery Network
+implemented CDN using terraform
+implemented complete project
+
+session-40:
+-----------
+OSI layers
+NACL vs SG
+
+session-41:
+-----------
+terraform state locking
+terraform taint
+terraform target
+terraform import
+how can you secure statefile in s3 bucket
