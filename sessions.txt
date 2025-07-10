@@ -110,3 +110,7 @@ terraform taint
 terraform target
 terraform import
 how can you secure statefile in s3 bucket
+
+session-42:
+-----------
+virtualization vs Docker
