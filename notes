@@ -358,3 +358,282 @@ destination mac - router mac address
 frame -> data pack and mac address
 
 physical layer - ethernet, wifi
+
+--------------------------------------------------------------------------------------
+Docker vs VirtualMachines
+
+Docker commands:
+----------------
+docker images
+docker ps 
+docker ps -a 
+docker pull
+docker create
+docker start
+docker rm 
+docker exec -it <container-id> bash
+docker logs <container-id>
+docker inspect <container-id>
+docker inspect <image-id>
+docker login -u <username>
+docker ps -a --no-trunc
+docker build -t arg :1.0.0 --progress=plain . -> this provides complete output
+
+
+**docker pull + docker create + docker start = docker run
+docker run -d <image-name> -> images runs in the background as detached mode 
+**docker run -d -p 80:80 nginx - > docker run -d -p <hostport>:<containerport> nginx
+**host port is managed by us but container port is fixed
+
+what is dockerfile?
+It is used to create our custom images using instructions provided by docker.
+
+CMD vs Entrypoint:
+------------------
+- CMD instructions can be overriden
+- you cant override entrypoint -> ping google.com ping facebook.com. If you try to override     ENTRYPOINT it will not override, but it will append.
+- For best results we can use CMD and ENTRYPOINT together.
+- we can mention command in ENTRYPOINT, default options/inputs can be supplied through CMD. user can always override default options.
+- only one CMD and one ENTRYPOINT should be used in Dockerfile.
+@16:00 session-44 for better practical explanation.
+
+USER -> set the user of container
+WORKDIR -> set the working directory of container/image
+
+ARG vs ENV:
+-----------
+- ENV variables can be accessed at the image building and in container also.
+- ARG variables are only accessed inside image build, not in container.
+- ARG can be the first instruction only to provide the version for base image. It cant be useful after FROM instruction.
+@55:00 session-44 for detailed explanation
+
+docker volumes:
+---------------
+session-46 @30:52
+
+docker maintains the images as layers, each and every instruction is one layer. docker creates
+1. intermediate container from instruction-1
+2. docker runs 2nd instruction on top of IC-1. then docker saves this another layer.
+3. docker saves this container as another image layer. create intermediate container out of it IC-2
+4. now docker runs 3rd instruction in IC-2 container. docker saves this as another layer.
+5. docker creates intermediate container from this layer as IC-3
+Refer: session-47 @25:00
+
+How do you optimise docker layers?
+----------------------------------
+1. less number of layers fater the builds, bcos number of intermediate containers are less.
+    you can club multiple instructions into single instruction.
+2. keep the frequently chnaging instructions at the bottom of Dockerfile.
+
+Multi-stage builds:
+-------------------
+for example: Java
+JDK - Java Development Kit
+JRE - Java Runtime Environment
+
+JDK > JRE
+JRE is subset of JDK 
+
+JDK = JRE + extra libraries
+
+while installing some libraries, OS adds extra space to HD. we will take only that jar file output and copy it another Dockerfile where only jre runs.
+
+we can have 2 dockerfiles one is for builder, we can copy the output from builder into 2nd dockerfile and run it, we can save some image space using this.
+
+docker multi stage builds are primarily used to create smaller, more optimized images by seperating the build environment from the runtime environment. we can have one as builder and one as runner, copy the backend output from builder to runner. docker removes builder automatically.
+
+what if underlying docker server crashes?
+- we need to maintain multiple docker hosts. you need some orchestrator to manage all the docker hosts. docker swarm is the native orchestrator.
+
+eksctl vs kubectl:
+------------------
+eksctl used for cluster creation , manage and delete.
+kubectl used for interacting with cluster and pushing manifests.
+aws configure used to setup your AWS CLI credentials and default settings.
+
+alias ka="kubectl apply -f"
+
+purpose of service:
+loadbalancing and pod to pod communication through service
+- ClusterIP: default, only works internally
+- Nodeport: external requests
+- LoadBalancer: only works with cloud providers. here service open classic LB.
+LoadBalancer > NodePort > ClusterIP
+
+NameSpace: 
+- A Namespace in Kubernetes is a way to divide cluster resources between multiple users or teams.
+- It helps organize and isolate resources like Pods, Services, and Deployments.
+- Useful for multi-tenant environments, CI/CD pipelines, and managing resource quotas.
+
+Kubelet:
+- The kubelet is an agent that runs on each node in the cluster.
+- It ensures containers are running in a Pod by communicating with the control plane.
+- It watches for PodSpecs and reports node status back to the master.
+
+In kubernetes, we have two types of resources which can be displayed using kubectl get api-resources
+- namespace level(if NAMESPACED is true) 
+- cluster level(if NAMESPACED is false)
+
+steps to access persistent volume:
+- install drivers
+- give permissions to worker nodes(go to IAM role in workernode and add the access policy AmazonEBSCSIDriverPolicy)
+- create volume
+- create PV, PVC and claim through pod.
+- EC2 and EBS volume should be in same AZ incase of EBS provisioning.
+
+Storage class:
+- this object is responsible for dynamic provisioning. it will create external storage and PV automatically.
+this is achieved by below steps.
+- install drivers
+- give permissions to worker nodes(go to IAM role in workernode and add the access policy AmazonEBSCSIDriverPolicy)
+- create storage class
+k8s provides default storage class however we dont use it
+kubectl get sc
+default ReclaimPolicy: Delete , better use as Retain
+
+EFS - Elastic File Sharing
+- EBS should be in same AZ as in EC2, EFS can be anywhere in n/w.
+- EBS speed is more compare to EFS.
+- EBS is used for OS disk and databases. EFS can be used for file storages.
+- EBS size is fixed. EFS will be scaled automatically.
+- EFS is based on NFS protocol.
+- EBS and EFS should be mounted to any instance.
+- you can have any filesystem attached to EBS, but EFS use NFS. we cant change it.
+
+EFS static:
+- install drivers
+- give permissions to worker nodes(go to IAM role in workernode and add the access policy AmazonEBSCSIDriverPolicy)
+- create EFS
+- open port 2049 on EFS to allow traffic from EC2 worker nodes.
+- create PV, PVC and pod
+
+EFS dynamic:
+- install drivers
+- create storage class
+- give permissions
+
+StatefulSets:
+- Deployment is for stateless applications, generally frontend and backend.
+- StatefulSet is for stateful applications usually databases.
+- StatefulSet will have headless service, deployment will not have headless service.
+- PV, PVS are mandatory for statefulSet.
+- pods in statefulSet create in orderly manner with static names. ex: statefulset-0, statefulset-1 etc.
+
+Headless service:
+- A headless service in Kubernetes is defined with clusterIP: None and is typically used when you want the client to directly resolve and communicate with individual pod IPs. This is especially useful in StatefulSets where each pod needs a stable network identity for coordination, like in Cassandra or Kafka clusters.
+
+Deployment:
+when you hit nslookup on servicename, you will get ClusterIP as address.
+
+you need to attach headless service to statefulset. why?
+what is headless service? headless service will have no clusterIP. It will be attached to StatefulSet.
+
+why statefulset have same names, pods preserve their identity?
+nginx-0 delete, statefulset creates immediately another pod nginx-0 and it should attach to its own storage through naming convention. persistentvolumeclaim/www-nginx-0.
+
+Deployment vs StatefulSet:
+- Deployment is for stateless applications, generally frontend and backend.
+- statefulset is for stateful applications usually database.
+- statefulset will have headless service, deployment will not have headless service.
+- PV and PVC are mandatory for statefulset.
+- pods in statefulset create in orderly manner with static names. statefulset-0, statefulset-1 etc
+
+Autoscaling:
+- Vertical scaling: 2CPU, 4GB, 20GB HDD --> 4CPU, 8GB, 50GB HDD
+- Horizontal scaling: create another server with 2CPU, 4GB, 20GB HDD and add to LB.
+
+kubernetes resources:
+---------------------
+- Namespace
+- Pod
+- ConfigMap
+- Secret
+- ReplicaSet
+- Deployment
+- Service
+- PV
+- PVC
+- StatefulSet
+- HPA
+- Headless service
+- Helm Charts
+- labels and selectors
+- taints and tolerations
+- affinity and anti-affinity
+- ingress controller and Ingress resource
+
+
+common errors in k8s:
+- ErrImagePull - if node is not able to pull the image
+- CrashLoopBackOff - container is unable to start
+- Pending - worker node not available in that AZ, PVC is not bound to PV
+- ContainerCreating - PV, PVC
+
+Taints and Tolerations:
+if you taint the node, scheduler will not schedule the pods on that node.
+If you apply toleration on a pod, it will be scheduled with matching nodes.
+Effects for taint:
+------------------
+- NoSchedule -> its like an order
+- PreferNoSchedule -> its a request
+- NoExecute -> existing pods also get evicted
+
+NoSchedule: Prevents new pods from being scheduled.
+NoExecute: Also evicts existing pods that don't tolerate the taint.
+
+How to add a taint?
+kubectl taint nodes node1 special=true:Noschedule
+this prevents any pod from being scheduled on node1 unless it tolerates this taint
+
+Example:
+kubectl taint nodes node1 environment=prod:NoSchedule
+
+Pod with toleration:
+--------------------
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  tolerations:
+  - key: "environment"
+    operator: "Equal"
+    value: "prod"
+    effect: "NoSchedule"
+
+this pod can run on the tainted node because it tolerates the environment=prod:NoSchedule taint
+
+Remove a taint:
+kubectl taint nodes node1 environment=prod:NoSchedule-
+
+Taints applied at node level and tolerations applied at pod level.
+
+Ingress resource:
+-----------------
+Ingress controller is used to provide external access to the applications running in kubernetes. we can set the routing rules through ingress resource either path based or host based. In EKS ingress resourcecan create ALB, Listener, Rule and target group. Ingress is attached to service, so it fetch the pods and add them to target group.
+
+ServiceAccounts:
+Service account is a non-human account, It is pod identity with which it can connect with api server and get access to external services.
+when you create a namespace or every namespace will have default service account.
+Service Account: default
+
+Init Containers:
+----------------
+Init containers are used to setup the requirements for pod, for example backend pod can check whether database connections working fine or not.
+Init Containers can fetch the secrets for pod before it starts.
+
+InitContainers are special containers run before main container runs, we can use them to makesure dependent services are running fine before our main application starts and fetch the secrets from secret manager for main container. They always run to completion. you can run one or many init containers, they executed in sequence.
+
+Init containers can do heavy lifting for main containers so that main container is less in size and limit attach surface of main container by not installing more tools in it
+
+Kubernetes internal volumes:
+emptyDir and hostPath
+emptyDir -> pod temporary storage, accessible until pod lives. all containers in the pod can access init container. stores the secret in emptyDir and completes. then main container can access this.
+
+DaemonSet:
+Make sure pod replica runs on each node. monitoring purpose and logs collection, metric collection etc.
+
+hostPath -> filesystem path in the underlying worker node. it is not secure, pods should not access host filesystems directly. But daemonset is only the exception for admins to collect logs and metrics.
