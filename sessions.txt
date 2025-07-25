@@ -150,7 +150,8 @@ docker swarm
 session-48
 ----------
 kubernetes introduction
-
+creation of eks cluster
+Namespace
 
 session-49
 ----------

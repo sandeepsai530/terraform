@@ -464,6 +464,7 @@ NameSpace:
 - A Namespace in Kubernetes is a way to divide cluster resources between multiple users or teams.
 - It helps organize and isolate resources like Pods, Services, and Deployments.
 - Useful for multi-tenant environments, CI/CD pipelines, and managing resource quotas.
+- it takes default namespace if nothing mentioned
 
 Kubelet:
 - The kubelet is an agent that runs on each node in the cluster.

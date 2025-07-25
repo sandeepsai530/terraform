@@ -27,4 +27,5 @@ sudo mv /tmp/eksctl /usr/local/bin
 
 eksctl version 
 
-
+#how to create a eks cluster
+#eksctl create cluster --config-file=eks.yaml
