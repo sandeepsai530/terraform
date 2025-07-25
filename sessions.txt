@@ -152,6 +152,7 @@ session-48
 kubernetes introduction
 creation of eks cluster
 Namespace
+pod
 
 session-49
 ----------
