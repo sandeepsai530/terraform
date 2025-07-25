@@ -114,8 +114,6 @@ how can you secure statefile in s3 bucket
 session-42:
 -----------
 Physical server vs VirtualMachines vs Docker
-Acess: AKIAW5WU5HA64Y4WDSUL
-Secret: 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
 
 session-43:
 -----------
