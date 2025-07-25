@@ -10,7 +10,7 @@ managedNodeGroups:
     instanceTypes: [ "m5.large", "c3.large", "c4.large", "c5.large"]
     desiredCapacity: 3
     spot: true #by this it will create spot instances, which are cost effective
-    ssh:
-      enableSsm: true
-      allow: true
-      publicKeyName: daws-82s
+    # ssh:
+    #   enableSsm: true
+    #   allow: true
+    #   publicKeyName: daws-82s
