@@ -468,6 +468,7 @@ NameSpace:
 
 Pod:
 Pod is the smallest deplyable unit in k8. Pod can have multiple containers 1 or many.
+multi-containers are useful in few applications like shipping logs through sidecar containers.
 
 Kubelet:
 - The kubelet is an agent that runs on each node in the cluster.
