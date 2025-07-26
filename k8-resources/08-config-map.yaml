@@ -3,7 +3,5 @@ kind: configMap
 metadata:
   name: config
 data:
-  - name: course 
-    value: "kubernetes"
-  - name: duration
-    value: "25HRS"
+  course: "kubernetes"
+  duration: "25HRS"
