@@ -494,6 +494,12 @@ Kubelet:
 - It ensures containers are running in a Pod by communicating with the control plane.
 - It watches for PodSpecs and reports node status back to the master.
 
+configMap:
+configMap allow you to externalize configuration from your container images. you can store key-value pairs(like application settings, DB URL's, feature flags etc) and then inject them into pod as 
+- environment variables
+- command line arguments
+- mounted volumes(files)
+
 In kubernetes, we have two types of resources which can be displayed using kubectl get api-resources
 - namespace level(if NAMESPACED is true) 
 - cluster level(if NAMESPACED is false)

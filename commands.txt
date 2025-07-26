@@ -1,0 +1,4 @@
+kubectl create -f pod.yaml
+kubectl apply -f pod.yaml
+kubectl top pod
+alias ku="kubectl"

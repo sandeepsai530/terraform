@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: configMap
+metadata:
+  name: config
+data:
+  - name: course 
+    value: "kubernetes"
+  - name: duration
+    value: "25HRS"
