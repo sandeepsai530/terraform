@@ -5,3 +5,4 @@ alias ku="kubectl"
 kubectl exec -it <pod-name> -- bash or sh 
 kubectl delete pod <pod-name>
 ku describe secret <secret-pod-name>
+ku delete pods --all
