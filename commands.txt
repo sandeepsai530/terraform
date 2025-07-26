@@ -2,3 +2,5 @@ kubectl create -f pod.yaml
 kubectl apply -f pod.yaml
 kubectl top pod
 alias ku="kubectl"
+kubectl exec -it <pod-name> -- bash or sh 
+kubectl delete pod <pod-name>
