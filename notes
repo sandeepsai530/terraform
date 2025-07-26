@@ -470,9 +470,24 @@ Pod:
 Pod is the smallest deplyable unit in k8. Pod can have multiple containers 1 or many.
 multi-containers are useful in few applications like shipping logs through sidecar containers.
 
+Static pods:
+these are special type of pods managed directly by the kubelet on each node ratherthan through the kubernetes API server.
+Example: ApiServer, kube-scheduler, control manager, ETCD etc.
+
 Labels and selectors:
-Labels are key-value pairs used to tag and organize resources like pods, deployments and services
-Selectors use these labels to filter or target these resources which is especially useful for grouping pods under services, applying network policies or scaling applications.
+Labels are key-value pairs used to tag and organize resources like pods, deployments and services. They help organize and group resources based on criteria that make sense to you.
+Example for labels:
+environment: production
+type: backend
+tier: frontend
+application: my-app
+
+Selectors filter kubernetes objects based on their labels. This is incredibly useful for querying and managing a subset of objects that meet specific criteria.
+
+common usage:
+pods: kubectl get pods --selector app=my-app
+Deployments: used to filter the pods managed by the deployment.
+Services: filter the pods to which the service routes traffic.
 
 Kubelet:
 - The kubelet is an agent that runs on each node in the cluster.
