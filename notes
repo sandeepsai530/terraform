@@ -466,6 +466,9 @@ NameSpace:
 - Useful for multi-tenant environments, CI/CD pipelines, and managing resource quotas.
 - it takes default namespace if nothing mentioned
 
+Pod:
+Pod is the smallest deplyable unit in k8. Pod can have multiple containers 1 or many.
+
 Kubelet:
 - The kubelet is an agent that runs on each node in the cluster.
 - It ensures containers are running in a Pod by communicating with the control plane.
