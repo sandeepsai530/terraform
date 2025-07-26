@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: multi-containers
 spec:
-  containers
+  containers:
   - name: nginx
     image: nginx
   - name: almalinux
