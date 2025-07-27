@@ -4,9 +4,9 @@ metadata:
   name: mysql
   namespace: expense
   labels:
-    app: mysql
-    tier: mysql
-    project: expense
+     app: mysql
+     tier: mysql
+     project: expense
 spec:
   replicas: 1
   selector:
@@ -25,8 +25,8 @@ spec:
       - name: nginx
         image: joindevops/mysql:1.0.0
 ---
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
   name: mysql
   namespace: expense

@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: frontend
   namespace: expense
+  # labels of deployment resource
   labels:
     app: frontend
     tier: web
@@ -23,7 +24,9 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: joindevops/mysql:1.0.0
+        image: joindevops/frontend:1.2.0
+        ports:
+        - containerPort: 8080
 ---
 kind: Service
 apiVersion: v1
@@ -32,11 +35,11 @@ metadata:
   namespace: expense
 spec:
   type: LoadBalancer
-  selector:
+  selector: # labels are used as selectors
     app: frontend
     tier: web
     project: expense
   ports:
   - protocol: TCP
-    port: 80
-    targetPort: 80
+    port: 80 # service port
+    targetPort: 8080
