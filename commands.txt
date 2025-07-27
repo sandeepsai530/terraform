@@ -7,6 +7,7 @@ kubectl top pod
 alias ku="kubectl"
 kubectl exec -it <pod-name> -- bash or sh 
 kubectl delete pod <pod-name>
+kubectl delete -f <yaml-file-name>
 kubectl describe secret <secret-pod-name>
 kubectl delete pods --all
 kubectl api-resources --namespaced=true

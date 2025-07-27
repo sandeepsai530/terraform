@@ -2,15 +2,19 @@ apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
   name: nginx
+  #these are replicaset labels
   labels:
     app: frontend
     tier: web
 spec:
+  #modify no. of replicas as per need
   replicas: 3
   selector:
+  #replicaset use these labels to find the pods for creating desired no. of replicas
     matchLabels:
       app: frontend
       tier: web
+  #pod template
   template:
     metadata:
       labels:

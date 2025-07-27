@@ -510,6 +510,8 @@ Types of Services:
 
 LoadBalance > NodePort > ClusterIP
 
+ReplicaSet
+
 In kubernetes, we have two types of resources which can be displayed using kubectl get api-resources
 - namespace level(if NAMESPACED is true) 
 - cluster level(if NAMESPACED is false)
