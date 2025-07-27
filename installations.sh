@@ -27,5 +27,8 @@ sudo mv /tmp/eksctl /usr/local/bin
 
 eksctl version 
 
-#how to create a eks cluster
-#eksctl create cluster --config-file=eks.yaml
+git clone https://github.com/sandeepsai530/terraform.git
+attach IAM role to ec2 instance
+eksctl create cluster --config-file=eks.yaml
+aws eks update-kubeconfig --name expense --region us-east-1
+eksctl delete cluster --config-file=eks.yaml

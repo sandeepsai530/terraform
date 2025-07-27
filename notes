@@ -508,6 +508,8 @@ Types of Services:
 - LoadBalancer -> to access application on a domain name or IP address without using the port number
 - External -> to use an external DNS for routing
 
+LoadBalance > NodePort > ClusterIP
+
 In kubernetes, we have two types of resources which can be displayed using kubectl get api-resources
 - namespace level(if NAMESPACED is true) 
 - cluster level(if NAMESPACED is false)

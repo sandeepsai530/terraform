@@ -13,4 +13,4 @@ managedNodeGroups:
 
 #eksctl create cluster --config-file=eks.yaml
 #aws eks update-kubeconfig --name expense --region us-east-1
-#eksctl create cluster --config-file=eks.yaml
+#eksctl delete cluster --config-file=eks.yaml

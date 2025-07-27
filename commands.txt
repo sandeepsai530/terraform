@@ -1,8 +1,12 @@
+eksctl create cluster --config-file=eks.yaml
+aws eks update-kubeconfig --name expense --region us-east-1
+eksctl delete cluster --config-file=eks.yaml
 kubectl create -f pod.yaml
 kubectl apply -f pod.yaml
 kubectl top pod
 alias ku="kubectl"
 kubectl exec -it <pod-name> -- bash or sh 
 kubectl delete pod <pod-name>
-ku describe secret <secret-pod-name>
-ku delete pods --all
+kubectl describe secret <secret-pod-name>
+kubectl delete pods --all
+kubectl api-resources --namespaced=true
