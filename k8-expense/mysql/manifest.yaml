@@ -18,8 +18,8 @@ spec:
     metadata:
       labels:
         app: mysql
-      tier: mysql
-      project: expense
+        tier: mysql
+        project: expense
     spec:
       containers:
       - name: nginx
