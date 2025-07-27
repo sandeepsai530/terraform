@@ -30,5 +30,6 @@ eksctl version
 git clone https://github.com/sandeepsai530/terraform.git
 attach IAM role to ec2 instance
 eksctl create cluster --config-file=eks.yaml
+sudo snap install aws-cli --classic
 aws eks update-kubeconfig --name expense --region us-east-1
 eksctl delete cluster --config-file=eks.yaml
