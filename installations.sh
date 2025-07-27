@@ -33,3 +33,8 @@ eksctl create cluster --config-file=eks.yaml
 sudo snap install aws-cli --classic
 aws eks update-kubeconfig --name expense --region us-east-1
 eksctl delete cluster --config-file=eks.yaml
+
+#kubens
+sudo git clone https://github.com/ahmetb/kubectx /opt/kubectx
+sudo ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx
+sudo ln -s /opt/kubectx/kubens /usr/local/bin/kubens

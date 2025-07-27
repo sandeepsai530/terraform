@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: expense
+  labels:
+    app: backend
+    tier: backend
+    project: expense
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+      tier: backend
+      project: expense
+  template:
+    metadata:
+      labels:
+        app: backend
+        tier: backend
+        project: expense
+    spec:
+      containers:
+      - name: nginx
+        image: joindevops/mysql:1.0.0
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: backend
+  namespace: expense
+spec:
+  selector:
+    app: backend
+    tier: backend
+    project: expense
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080 
