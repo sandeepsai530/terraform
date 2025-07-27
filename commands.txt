@@ -11,3 +11,6 @@ kubectl delete -f <yaml-file-name>
 kubectl describe secret <secret-pod-name>
 kubectl delete pods --all
 kubectl api-resources --namespaced=true
+ku rollout history deployment/nginx
+ku rollout undo deployment/nginx  -> rollback to previous version
+ku rollout undo deployment/nginx --to-revision=3 -> rollback to specific version

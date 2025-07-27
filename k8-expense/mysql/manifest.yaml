@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: expense
+  labels:
+    app: mysql
+    tier: mysql
+    project: expense
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+      tier: mysql
+      project: expense
+  template:
+    metadata:
+      labels:
+        app: mysql
+      tier: mysql
+      project: expense
+    spec:
+      containers:
+      - name: nginx
+        image: joindevops/mysql:1.0.0
