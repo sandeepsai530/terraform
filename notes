@@ -565,7 +565,7 @@ EFS static:
 - install drivers
 - give permissions to worker nodes(go to IAM role in workernode and add the access policy AmazonEBSCSIDriverPolicy)
 - create EFS
-- open port 2049 on EFS to allow traffic from EC2 worker nodes.
+- open port 2049 on EFS to allow traffic from EC2 worker nodes. Refer: session 52: 39:00:00
 - create PV, PVC and pod
 
 EFS dynamic:

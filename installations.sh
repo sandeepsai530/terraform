@@ -40,9 +40,15 @@ sudo ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx
 sudo ln -s /opt/kubectx/kubens /usr/local/bin/kubens
 kubens expense
 
-#EBS static
+#EBS drivers
 create a volume in same AZ as EC2 node
 install ebs csi driver
 kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.46"
 verify using: kubectl get pods -n kube-system
 attach policy EBSCSIDriver to IAM role of the node
+
+#EFS drivers
+install efs csi driver
+kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/ecr/?ref=release-2.1" > private-ecr-driver.yaml
+attach policy EBSCSIDriver to IAM role of the node
+create an EFS file system
