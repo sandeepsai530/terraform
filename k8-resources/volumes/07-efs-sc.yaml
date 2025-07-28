@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: StorageClass
+metadata:
+  name: efs-expense
+provisioner: efs.csi.aws.com
+parameters:
+  provisioning Mode: efs-ap 
+  fileSystemId: fs-098a83044dfbbcb0d
+  directoryPerms: "700"
+  basePath: "/expense"
