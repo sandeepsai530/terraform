@@ -530,7 +530,6 @@ access modes:
 ReadWriteOnce, ReadOnlyMany, ReadWriteMany or ReadWriteOncePod
 
 Life cycle policies:
-Retain, Reclaim and Delete
 Retain: Keeps the data after the PVC is deleted; manual cleanup required
 Reclaim: (Deprecated) Attempts basic cleanup and makes PV available again
 Delete: Deletes both the PVC and the actual underlying storage (e.g., AWS EBS volume)
