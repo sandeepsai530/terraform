@@ -510,11 +510,30 @@ Types of Services:
 
 LoadBalance > NodePort > ClusterIP
 
-ReplicaSet
+ReplicaSet vs Deployments:
+ReplicaSets: Ensures a specified number of identical Pods are always running
+  Drawback: No support for version updates or rollbacks.
+Deployments: Manages ReplicaSets and enables declarative updates to Pods
 
 In kubernetes, we have two types of resources which can be displayed using kubectl get api-resources
 - namespace level(if NAMESPACED is true) 
 - cluster level(if NAMESPACED is false)
+
+Volumes:
+Static and dynamic provisioning
+
+PV, PVC and storage class
+
+Pod -> PV -> PVC -> volume
+
+access modes:
+ReadWriteOnce, ReadOnlyMany, ReadWriteMany or ReadWriteOncePod
+
+Life cycle policies:
+Retain, Reclaim and Delete
+Retain: Keeps the data after the PVC is deleted; manual cleanup required
+Reclaim: (Deprecated) Attempts basic cleanup and makes PV available again
+Delete: Deletes both the PVC and the actual underlying storage (e.g., AWS EBS volume)
 
 steps to access persistent volume:
 - install drivers

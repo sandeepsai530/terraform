@@ -39,3 +39,10 @@ sudo git clone https://github.com/ahmetb/kubectx /opt/kubectx
 sudo ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx
 sudo ln -s /opt/kubectx/kubens /usr/local/bin/kubens
 kubens expense
+
+#EBS static
+create a volume in same AZ as EC2 node
+install ebs csi driver
+kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.46"
+verify using: kubectl get pods -n kube-system
+attach policy EBSCSIDriver to IAM role of the node

@@ -177,6 +177,7 @@ EBS - EFS
 PV, PVC , default values
 static provisioning
 Scheduler - Node selector
+QUIZ
 
 session-52:
 -----------
