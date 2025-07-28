@@ -543,6 +543,7 @@ steps to access persistent volume:
 
 Storage class:
 - this object is responsible for dynamic provisioning. it will create external storage and PV automatically.
+
 this is achieved by below steps.
 - install drivers
 - give permissions to worker nodes(go to IAM role in workernode and add the access policy AmazonEBSCSIDriverPolicy)
