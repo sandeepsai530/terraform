@@ -183,7 +183,7 @@ session-52:
 -----------
 api-resources 
 Dynamic provisioning
-EFS - Elastic File Sharing - static and Dynamic
+EFS - Elastic File Sharing - static and Dynamic - practice again
 StatefulSet
 
 session-53:
