@@ -44,7 +44,7 @@ spec:
     #instead of creating a PVC resource , you can directly provide in statefulset
   volumeClaimTemplates:
   - metadata:
-    name: ebs-sc
+    name: www
     spec:
       accessModes: [ "ReadWriteOnce" ]  
       storageClassName: "ebs-sc"
