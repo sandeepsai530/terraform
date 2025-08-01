@@ -191,6 +191,7 @@ session-53:
 StatefulSet and headless service
 StatefulSet vs deployment
 created expense project using all the resources - need to implement this
+k9s
 ASG - Vertical scaling and Horizontal scaling
 
 session-54:
