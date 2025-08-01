@@ -27,7 +27,6 @@ sudo mv /tmp/eksctl /usr/local/bin
 
 eksctl version 
 
-git clone https://github.com/sandeepsai530/terraform.git
 attach IAM role to ec2 instance
 eksctl create cluster --config-file=eks.yaml
 sudo snap install aws-cli --classic
