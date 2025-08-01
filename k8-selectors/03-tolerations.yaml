@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tolerations1
+  labels:
+    purpose: "tolerations1-demo"
+spec:
+  nodeSelector:
+    topology.kubernetes.io/zone: us-east-1c
+  containers:
+  - name: nginx
+    image: nginx

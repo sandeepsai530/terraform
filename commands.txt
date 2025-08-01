@@ -15,3 +15,5 @@ ku rollout history deployment/nginx
 ku rollout undo deployment/nginx  -> rollback to previous version
 ku rollout undo deployment/nginx --to-revision=3 -> rollback to specific version
 ku get nodes --show-labels
+ku taint nodes ip-192-168-48-179.ec2.internal hardware=gpu:NoExecute
+ku taint nodes ip-192-168-48-179.ec2.internal hardware=gpu:NoExecute-
