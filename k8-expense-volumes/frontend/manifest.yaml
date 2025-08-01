@@ -1,3 +1,4 @@
+#configMap, Deployment, Service, AutoScaling
 apiVersion: v1
 kind: ConfigMap
 metadata:
