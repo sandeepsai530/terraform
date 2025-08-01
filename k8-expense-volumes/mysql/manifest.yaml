@@ -56,8 +56,8 @@ spec:
     metadata:
       labels:
         app: mysql
-      project: expense
-      tier: db
+        project: expense
+        tier: db
     spec:
       terminationGracePeriodSeconds: 10
       containers:
