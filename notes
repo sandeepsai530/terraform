@@ -621,6 +621,7 @@ kubernetes resources:
 - labels and selectors
 - taints and tolerations
 - affinity and anti-affinity
+- pod affinity and pod anti affinity
 - ingress controller and Ingress resource
 
 
