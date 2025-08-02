@@ -7,11 +7,11 @@ metadata:
 spec:
   affinity:
     nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
+      PrefferedDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
         - matchExpressions:
           - key: hardware
-            operator: NotIn 
+            operator: NotIn  # anti-affinity
             values:
             - gpu
   containers:
