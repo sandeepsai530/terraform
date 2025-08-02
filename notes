@@ -618,6 +618,7 @@ kubernetes resources:
 - HPA
 - Headless service
 - Helm Charts
+- resource requests and limits
 - labels and selectors
 - taints and tolerations
 - affinity and anti-affinity

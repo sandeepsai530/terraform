@@ -31,7 +31,7 @@ attach IAM role to ec2 instance
 sudo snap install aws-cli --classic
 git clone https://github.com/sandeepsai530/terraform.git
 eksctl create cluster --config-file=eks.yaml
-aws eks update-kubeconfig --name expense --region us-east-1
+aws eks update-kubeconfig --name expense1 --region us-east-1
 eksctl delete cluster --config-file=eks.yaml
 
 #kubens
