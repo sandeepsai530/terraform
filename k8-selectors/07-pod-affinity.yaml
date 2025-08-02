@@ -14,7 +14,7 @@ kind: Pod
 metadata:
   name: pod-2
   labels:
-    app-name: pod-2
+    app-name: pod-1
 spec:
   affinity:
     podAffinity:
