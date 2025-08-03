@@ -208,7 +208,7 @@ Ingress controller introduction
 session-56:
 -----------
 Ingress controller implementation
-RBAC
+RBAC - didnt practice, clear with concept, try to make notes
 
 session-57:
 -----------
