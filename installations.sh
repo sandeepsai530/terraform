@@ -1,5 +1,6 @@
 #docker
 curl https://get.docker.com |bash
+sudo chmod 666 /var/run/docker.sock
 
 #kubernetes
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -56,3 +57,15 @@ create an EFS file system
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
 chmod 700 get_helm.sh
 ./get_helm.sh
+
+#AWS CLI installation
+sudo snap install aws-cli --classic
+
+[OR]
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+#K9S installation
+curl -sS https://webinstall.dev/k9s | bash

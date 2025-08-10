@@ -632,6 +632,45 @@ common errors in k8s:
 - Pending - worker node not available in that AZ, PVC is not bound to PV
 - ContainerCreating - PV, PVC
 
+Scheduling in kubernetes:
+-------------------------
+- Node selector
+- taints and tolerations
+- node affinity and anti-affinity
+- pod affinity and anti-affinity
+
+what is node selector?
+- nodeSelector is the simplest form of node selection constraint in Kubernetes. It tells the scheduler to place a pod only on nodes that match a specific key-value label.
+Ex: kubectl label nodes node1 disktype=ssd
+
+Taints and Tolerations?
+- Taints are applied to nodes to repel pods that do not tolerate them.
+- Tolerations are applied to pods, allowing them to be scheduled on nodes with matching taints.
+--> They work together to prevent certain pods from being scheduled on certain nodes unless explicitly allowed.
+Options:
+NoSchedule - Pods won’t be scheduled unless they tolerate the taint
+PreferNoSchedule - Tries to avoid scheduling, but not strictly enforced
+NoExecute	- Evicts existing pods if they don’t tolerate it, and blocks new pods too
+
+Node affinity and Anti affinity?
+- Node Affinity is a rule that tells the Kubernetes scheduler where a pod should or must run,   based on node labels. It allows more expressive control than simple nodeSelector.
+
+- Node Anti-Affinity prevents pods from being scheduled on nodes with specific labels.
+Used when you do not want pods to land on certain nodes.
+
+Options:
+- requiredDuringSchedulingIgnoredDuringExecution	Hard rule — pod won't be scheduled if condition not met
+- preferredDuringSchedulingIgnoredDuringExecution	Soft rule — try to schedule on matching node, but not mandatory
+
+Pod affinity and Anti affinity?
+- Pod affinity is Schedule this pod on a node where certain other pods already exist
+- Anti affinity is Avoid scheduling this pod on the same node as other specific pods.
+Options:
+requiredDuringSchedulingIgnoredDuringExecution	Hard rule — must meet condition
+preferredDuringSchedulingIgnoredDuringExecution	Soft rule — try to meet condition
+
+
+
 Taints and Tolerations:
 if you taint the node, scheduler will not schedule the pods on that node.
 If you apply toleration on a pod, it will be scheduled with matching nodes.
