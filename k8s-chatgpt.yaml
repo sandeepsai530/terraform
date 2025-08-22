@@ -1,0 +1,463 @@
+# ------------------------
+# Namespace
+# ------------------------
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-namespace
+
+---
+# ------------------------
+# ResourceQuota (per-namespace limits)
+# ------------------------
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: demo-namespace-quota
+  namespace: demo-namespace
+spec:
+  hard:
+    requests.cpu: "2"
+    requests.memory: 4Gi
+    limits.cpu: "4"
+    limits.memory: 8Gi
+    pods: "20"
+    services: "10"
+
+---
+# ------------------------
+# LimitRange (default per-pod/container requests & limits)
+# ------------------------
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: demo-limit-range
+  namespace: demo-namespace
+spec:
+  limits:
+    - type: Container
+      default:
+        cpu: "500m"
+        memory: "512Mi"
+      defaultRequest:
+        cpu: "200m"
+        memory: "256Mi"
+
+---
+# ------------------------
+# ServiceAccount
+# ------------------------
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: demo-sa
+  namespace: demo-namespace
+
+---
+# ------------------------
+# Role
+# ------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: demo-role
+  namespace: demo-namespace
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services"]
+    verbs: ["get", "list", "watch"]
+
+---
+# ------------------------
+# RoleBinding
+# ------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: demo-rolebinding
+  namespace: demo-namespace
+subjects:
+  - kind: ServiceAccount
+    name: demo-sa
+    namespace: demo-namespace
+roleRef:
+  kind: Role
+  name: demo-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# ------------------------
+# PersistentVolume
+# ------------------------
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: demo-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes: ["ReadWriteOnce"]
+  hostPath:
+    path: /data/demo
+
+---
+# ------------------------
+# PersistentVolumeClaim
+# ------------------------
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: demo-pvc
+  namespace: demo-namespace
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+# ------------------------
+# Deployment
+# ------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-deployment
+  namespace: demo-namespace
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      serviceAccountName: demo-sa
+      containers:
+        - name: demo-app
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+---
+# ------------------------
+# StatefulSet
+# ------------------------
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: demo-db
+  namespace: demo-namespace
+spec:
+  serviceName: demo-db-headless
+  replicas: 2
+  selector:
+    matchLabels:
+      app: demo-db
+  template:
+    metadata:
+      labels:
+        app: demo-db
+    spec:
+      containers:
+        - name: db
+          image: mysql:5.7
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: rootpass
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: db-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 2Gi
+
+---
+# ------------------------
+# Headless Service (for StatefulSet)
+# ------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-db-headless
+  namespace: demo-namespace
+spec:
+  clusterIP: None
+  selector:
+    app: demo-db
+  ports:
+    - port: 3306
+
+---
+# ------------------------
+# PodDisruptionBudget (for StatefulSet)
+# ------------------------
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: demo-db-pdb
+  namespace: demo-namespace
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: demo-db
+
+---
+# ------------------------
+# DaemonSet
+# ------------------------
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: demo-daemon
+  namespace: demo-namespace
+spec:
+  selector:
+    matchLabels:
+      app: demo-daemon
+  template:
+    metadata:
+      labels:
+        app: demo-daemon
+    spec:
+      containers:
+        - name: log-agent
+          image: busybox
+          command: ["sh", "-c", "while true; do echo logging; sleep 10; done"]
+
+---
+# ------------------------
+# Job
+# ------------------------
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: demo-job
+  namespace: demo-namespace
+spec:
+  template:
+    spec:
+      containers:
+        - name: job
+          image: busybox
+          command: ["echo", "Hello from Job!"]
+      restartPolicy: Never
+  backoffLimit: 3
+
+---
+# ------------------------
+# CronJob
+# ------------------------
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: demo-cronjob
+  namespace: demo-namespace
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: cron
+              image: busybox
+              command: ["echo", "Hello from CronJob!"]
+          restartPolicy: OnFailure
+
+---
+# ------------------------
+# Service
+# ------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-service
+  namespace: demo-namespace
+spec:
+  type: ClusterIP
+  selector:
+    app: demo
+  ports:
+    - port: 80
+      targetPort: 80
+
+---
+# ------------------------
+# Ingress
+# ------------------------
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-ingress
+  namespace: demo-namespace
+spec:
+  rules:
+    - host: demo.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: demo-service
+                port:
+                  number: 80
+
+---
+# ------------------------
+# NetworkPolicy
+# ------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: demo-network-policy
+  namespace: demo-namespace
+spec:
+  podSelector:
+    matchLabels:
+      app: demo
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: demo-db
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: demo-db
+
+---
+# ------------------------
+# HorizontalPodAutoscaler
+# ------------------------
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: demo-hpa
+  namespace: demo-namespace
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: demo-deployment
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+
+---
+# ------------------------
+# Advanced Pod Scheduling (affinity, tolerations, nodeSelector)
+# ------------------------
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo-scheduling-pod
+  namespace: demo-namespace
+spec:
+  nodeSelector:
+    disktype: ssd
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - demo
+          topologyKey: "kubernetes.io/hostname"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "gpu"
+      effect: "NoSchedule"
+  containers:
+    - name: nginx
+      image: nginx
+
+---
+# ------------------------
+# ConfigMap
+# ------------------------
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demo-config
+  namespace: demo-namespace
+data:
+  APP_COLOR: blue
+  APP_MODE: production
+
+---
+# ------------------------
+# Secret
+# ------------------------
+apiVersion: v1
+kind: Secret
+metadata:
+  name: demo-secret
+  namespace: demo-namespace
+type: Opaque
+data:
+  DB_USER: ZGVtb3VzZXI=   # base64 for "demouser"
+  DB_PASS: ZGVtb3Bhc3M=   # base64 for "demopass"
+
+---
+# ------------------------
+# Pod with InitContainer using ConfigMap & Secret
+# ------------------------
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo-init-pod
+  namespace: demo-namespace
+spec:
+  initContainers:
+    - name: init-demo
+      image: busybox
+      command: ['sh', '-c', 'echo "Initializing with $APP_COLOR mode=$APP_MODE"']
+      envFrom:
+        - configMapRef:
+            name: demo-config
+  containers:
+    - name: app
+      image: nginx
+      env:
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: demo-secret
+              key: DB_USER
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: demo-secret
+              key: DB_PASS
+      ports:
+        - containerPort: 80

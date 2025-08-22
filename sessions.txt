@@ -242,3 +242,19 @@ kubernetes architecture
 coninous integration
 jenkins
 sample jenkinsfile
+
+session-65:
+-----------
+Declaritive vs Scripted
+parameters and options
+environment
+types of builds
+webhooks
+master and agents
+build periodically similar to cron job
+input
+built-in conditions
+parallel and sequential builds
+deleteDir()
+
+write a sample pipeline using all the options

@@ -15,6 +15,22 @@ terraform fmt - Formats .tf files to the canonical style.
 
 .gitignore - files that not needed to be tracked by git can be placed under .gitignore folder
 
+Manage terraform:
+-----------------
+Remote backend - store the statefile in S3 [backend.tf]
+State locking - to avoid multiple users updating the statefile at the same time use DynamoDB
+
+Mainly we need to remember four components while writing HCL scripts.
+- provider block
+- resource block
+- variable block
+- output block
+
+Steps to consider for creating a EKS cluster usinf terraform(Explained by Abhishek Veeramalla)
+- iam role, add policy and create cluster
+- iam role, add policy and create nodegroup
+Note: refer video by Abhishek Veeramalla from Udemy 41 session
+
 variables:
 -----------
 syntax:
@@ -96,6 +112,10 @@ Data sources:
 -> data sources are used to query existing information from the provider
 -> data sources in terraform are used to get information about resources external to terraform and uses them to set up your terraform resources.
 
+Terraform taint:
+----------------
+
+
 types variables that we can pass:
 1. command line -> -var "<instance_type=t2.micro" or -var "<var-name>=<var-value>"
 2. tfvars
@@ -120,6 +140,57 @@ loops:
 1. count based loops
 2. for each loops
 3. dynamic blocks
+
+- count lets you create multiple identical resources using a numeric index.
+resource "aws_instance" "web" {
+  count         = 3
+  ami           = "ami-123456"
+  instance_type = "t2.micro"
+  tags = {
+    Name = "web-${count.index}"
+  }
+}
+
+- for_each is more flexible, allowing multiple resources based on a map or set, giving custom keys 
+  for each resource.
+variable "instances" {
+  default = {
+    frontend = "t2.micro"
+    backend  = "t2.small"
+  }
+}
+
+resource "aws_instance" "app" {
+  for_each      = var.instances
+  ami           = "ami-123456"
+  instance_type = each.value
+  tags = {
+    Name = each.key
+  }
+}
+
+- dynamic blocks let you programmatically generate nested blocks, useful when the number or content of 
+  sub-blocks depends on variables or lists.
+variable "ingress_rules" {
+  default = [
+    { from_port = 80,  to_port = 80,  cidr_blocks = ["0.0.0.0/0"] },
+    { from_port = 443, to_port = 443, cidr_blocks = ["0.0.0.0/0"] }
+  ]
+}
+
+resource "aws_security_group" "web_sg" {
+  name = "web-sg"
+
+  dynamic "ingress" {
+    for_each = var.ingress_rules
+    content {
+      from_port   = ingress.value.from_port
+      to_port     = ingress.value.to_port
+      protocol    = "tcp"
+      cidr_blocks = ingress.value.cidr_blocks
+    }
+  }
+}
 
 Count vs for-each:
 count - when you need N identical resources.
@@ -197,7 +268,34 @@ Loops:
 ------
 1-count based loops: use it to iterate lists
 2-for each loop: use it to iterate maps
-3-dynamic blocks:
+3-dynamic blocks
+
+Terraform import:
+----------------
+Terraform import is used to bring existing infrastructure under Terraform management by updating the state file. It allows Terraform to track and manage resources created outside of Terraform.
+Example:
+Pre-requisite:
+Bucket Name: my-existing-bucket (this should exist in the S3)
+main.tf:
+provider "aws" {
+  region = "us-east-1"
+}
+# Define the S3 bucket resource
+resource "aws_s3_bucket" "my_bucket" {
+  bucket = "my-existing-bucket"
+  # Optional: you can add more configurations after import
+  acl    = "private"
+
+  tags = {
+    Environment = "Dev"
+    Project     = "TerraformImportDemo"
+  }
+}
+
+command: 
+terraform init
+terraform import aws_s3_bucket.my_bucket my-existing-bucket
+
 
 provisioners:
 -------------
@@ -572,6 +670,17 @@ EFS dynamic:
 - install drivers
 - create storage class
 - give permissions
+
+ImagePullPolicy:
+- In Kubernetes, imagePullPolicy is a setting on a Pod/Container spec that tells Kubelet when to pull (download) the container image from the container registry (like Docker Hub, ECR, GCR, etc.).
+1) Always
+2) IfNotPresent
+3) Never
+
+Defaults & Special Behavior
+- If imagePullPolicy is not specified, Kubernetes applies defaults:
+- If the image tag is :latest → default is Always
+- If the image tag is anything else (like v1.0.0) → default is IfNotPresent
 
 StatefulSets:
 - Deployment is for stateless applications, generally frontend and backend.

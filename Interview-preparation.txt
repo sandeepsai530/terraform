@@ -1,0 +1,298 @@
+-----------------------------
+Current project architecture:|
+-----------------------------
+High-Level Architecture
+- In my current project, we are running a microservices-based application on AWS. Each microservice is 
+  containerized using Docker and deployed on Amazon EKS (Kubernetes). We use Helm charts for packaging 
+  and managing Kubernetes manifests, and ArgoCD for GitOps-based continuous delivery.
+- Networking: We use an AWS ALB Ingress Controller to expose services securely with HTTPS and route 
+  traffic based on host/path rules.
+- Storage & Databases: The application uses Amazon RDS for relational data and Amazon S3 for object 
+  storage. For caching, we rely on Amazon ElastiCache (Redis).
+- CI/CD: Our pipeline is built with Jenkins integrated with SonarQube for code quality, Trivy for image 
+  scanning, and finally pushing images to Amazon ECR before deploying to EKS via ArgoCD.
+- Monitoring & Logging: We use Prometheus + Grafana for metrics, ELK/EFK stack for centralized logging, 
+  and CloudWatch for AWS resource-level monitoring.
+- Secrets & Config: Secrets are managed in AWS Secrets Manager and referenced in Terraform and Kubernetes.
+- Infrastructure as Code: All infrastructure (VPC, EKS, RDS, S3, IAM roles, etc.) is provisioned and 
+  managed with Terraform.
+
+------------------------
+My Role in the Project:|
+------------------------
+- As a DevOps Engineer, my role includes:
+- Designing and maintaining the CI/CD pipeline (Jenkins + GitOps with ArgoCD).
+- Implementing Terraform modules for multi-environment provisioning (dev/stage/prod).
+- Setting up and maintaining Kubernetes deployments, network policies, and Helm charts.
+- Ensuring security best practices by integrating vulnerability scanning (Trivy, SonarQube, 
+  IAM least-privilege policies).
+- Implementing S3 lifecycle policies and cost optimization strategies.
+- Handling Kubernetes troubleshooting — e.g., stuck pods, scaling issues, and network policy debugging.
+- Setting up Prometheus alerts and Grafana dashboards for performance and availability monitoring.
+- Collaborating with developers to optimize application performance and reduce deployment failures.
+- Managing drift detection in Terraform and enforcing infra consistency via CI/CD."*
+
+
+
+----
+GIT:|
+----
+We follow a GitFlow branching model with main, develop, feature, release, and hotfix branches. 
+All new features were developed in feature branches, merged into develop after review, then promoted
+through release branches to main for production. 
+Hotfixes were patched directly from main and merged back. 
+CI/CD pipelines were tied to develop (staging) and main (production).
+
+main → stable production code.
+develop → integration branch for staging/UAT.
+feature/ → short-lived branches for new features.
+release/ → prepares production release (bug fixes only).
+hotfix/ → urgent production fixes, merged into both main and develop.
+
+***flow diagram showing how a new feature reaches production***
+
+🟠 feature/ → 🟢 develop → 🟣 release → 🔵 main → 🔴 Production
+
+So, production (live) always comes from main, not directly from develop.
+
+1) main branch
+- Always stable, production-ready code.
+- Deployments to production are triggered from here.
+
+2) develop branch
+- integration branch where features are merged after passing code review + CI tests.
+- Acts as staging area for QA/UAT deployments.
+
+3) feature/* branches
+- Developers create feature branches from develop
+- Example: feature/user-authentication
+- Merged back into develop via Pull Request (with code review + automated tests)
+
+4) release/* branch
+- when a release is planned, we cut a branch from develop
+- QA/UAT testing happens from here
+- only bug fixes are allowed; no new features
+- Example: release/v1.3
+
+5) hotfix/* branch
+- For urgent production issues
+- created from main branch, tested then merged into both main and develop
+- Example: hotfix/payment-bug
+
+🔑 ✨ 𝗖𝗢𝗠𝗠𝗢𝗡 𝗚𝗜𝗧 𝗧𝗘𝗥𝗠𝗦 (𝗠𝗔𝗗𝗘 𝗦𝗜𝗠𝗣𝗟𝗘) ✨
+📂 𝗥𝗲𝗽𝗼𝘀𝗶𝘁𝗼𝗿𝘆 (𝗥𝗲𝗽𝗼): A storage space for your project (like a folder with history).
+ 💾 𝗖𝗼𝗺𝗺𝗶𝘁: A snapshot of your code → like “Save Game” in coding.
+ 🌿 𝗕𝗿𝗮𝗻𝗰𝗵: A safe workspace to try new features without touching the main code.
+ ⬇️ 𝗣𝘂𝗹𝗹: Bring the latest changes from GitHub to your laptop.
+ ⬆️ 𝗣𝘂𝘀𝗵: Send your commits from your laptop to GitHub.
+ 🔀 𝗣𝘂𝗹𝗹 𝗥𝗲𝗾𝘂𝗲𝘀𝘁 (𝗣𝗥): A request to merge your branch → teammates review this.
+ 🤝 𝗠𝗲𝗿𝗴𝗲: Combine changes from one branch into another.
+ 📜 𝗥𝗲𝗯𝗮𝘀𝗲: Replay your commits on top of another branch to keep history clean.
+ ⚡ 𝗖𝗼𝗻𝗳𝗹𝗶𝗰𝘁: When two people edit the same line → Git asks you to choose.
+ ⏪ 𝗥𝗲𝘀𝗲𝘁: Undo commits locally (before pushing).
+ ↩️ 𝗥𝗲𝘃𝗲𝗿𝘁: Undo commits already pushed (safe for shared branches).
+ 📌 𝗦𝘁𝗮𝘀𝗵: Temporarily save unfinished work without committing.
+ 🧹 𝗦𝗾𝘂𝗮𝘀𝗵: Combine multiple commits into one clean commit.
+ 🍒 𝗖𝗵𝗲𝗿𝗿𝘆-𝗽𝗶𝗰𝗸: Take one specific commit from another branch without merging everything.
+
+🎓 𝗘𝗫𝗔𝗠𝗣𝗟𝗘: 𝗖𝗢𝗟𝗟𝗘𝗚𝗘 𝗣𝗥𝗢𝗝𝗘𝗖𝗧 𝗪𝗢𝗥𝗞
+📂 𝗥𝗲𝗽𝗼: The project folder where the whole team stores work.
+ 💾 𝗖𝗼𝗺𝗺𝗶𝘁: “Added Introduction section.”
+ 🌿 𝗕𝗿𝗮𝗻𝗰𝗵: Create your own copy → main project remains safe.
+ ⬇️ 𝗣𝘂𝗹𝗹: Get teammates’ updates before writing.
+ ⬆️ 𝗣𝘂𝘀𝗵: Upload your finished part to the shared folder.
+ 🔀 𝗣𝗥 (Pull Request): Ask, “Can we add my part to the main project?”
+ 🤝 𝗠𝗲𝗿𝗴𝗲: Team approves → your part gets added.
+ 📜 𝗥𝗲𝗯𝗮𝘀𝗲: Rewrite your work on top of the latest version neatly.
+ ⚡ 𝗖𝗼𝗻𝗳𝗹𝗶𝗰𝘁: Two members wrote on the same line → decide which one to keep. 
+ ⏪ 𝗥𝗲𝘀𝗲𝘁: Undo your last change locally.
+ ↩️ 𝗥𝗲𝘃𝗲𝗿𝘁: Cancel a wrong change in the shared folder.
+ 📌 𝗦𝘁𝗮𝘀𝗵: Pause unfinished work without finalizing.
+ 🧹 𝗦𝗾𝘂𝗮𝘀𝗵: Combine small edits into one neat update.
+ 🍒 𝗖𝗵𝗲𝗿𝗿𝘆-𝗽𝗶𝗰𝗸: Copy one good line from a friend’s section.
+
+-------
+ LINUX |
+-------
+1) Soft link vs Hard link?
+-   A hard link is like an alternate name for the same file, sharing the same inode, while a soft link 
+  is more like a shortcut pointing to the file path. The key difference is: if the original is deleted, 
+  hard links still keep the data, but soft links break.”
+
+
+----------
+TERRAFORM |
+----------
+1) what is terraform state?
+- Terraform state is a file that keeps track of the resources Terraform manages, including metadata
+  and current configuration.For security and collaboration, state should be stored remotely in a backend
+  like S3 with encryption and locking enabled, and access should be controlled using IAM policies. This 
+  ensures sensitive data is protected & multiple team members can safely work on the same infrastructure.
+
+2) Difference between `terraform plan` and `terraform apply`.
+- terraform plan lets you preview the changes. It will make without touching any real infrastructure,
+  which helps avoid mistakes. terraform apply actually makes the changes and updates the state to match
+  the desired configuration. Typically, we run plan first to review, and then apply to execute safely.
+
+3) How do you manage secrets in Terraform?
+- In Terraform,manage secrets by keeping them out of code. use sensitive variables, environment variables,
+  or fetch secrets from services like AWS Secrets Manager or Vault. I also ensure Terraform state is
+  stored securely in encrypted backends to prevent exposure.Hardcoding secrets is strictly avoided.
+
+4) What are Terraform providers? Can you create a custom one?
+- Terraform providers are plugins that allow Terraform to communicate with external services and manage 
+  resources. For example, the AWS provider lets Terraform create, update, and delete AWS resources like S3 
+  buckets, EC2 instances, and RDS databases by mapping Terraform resources to AWS API calls.
+
+  Yes, you can create a custom provider if a service is not supported by existing providers. Custom 
+  providers are typically written in Go using the Terraform Plugin SDK. You define the provider, its 
+  resources, and CRUD operations.
+
+5) what is the role of terraform init
+- Terraform init is the first command you run in a new or existing Terraform directory. It sets up the 
+  working directory by downloading required providers, initializing backend state, fetching modules, and 
+  preparing Terraform to execute plans or apply changes. Without init, Terraform cannot interact with the 
+  cloud provider or manage resources.
+
+6) How do `count`, `for_each`, and `dynamic` blocks work in Terraform?
+-> Refer notes for example of each
+- count lets you create multiple identical resources using a numeric index.
+- for_each is more flexible, allowing multiple resources based on a map or set, giving custom keys 
+  for each resource.
+- dynamic blocks let you programmatically generate nested blocks, useful when the number or content of 
+  sub-blocks depends on variables or lists.
+
+7) what are provisioners and What is the difference between local-exec and remote-exec provisioners? 
+- Provisioners are used in Terraform to run scripts or commands after resource creation. 
+- local-exec runs commands on the machine executing Terraform
+- remote-exec runs commands on the created resource itself via SSH or WinRM. 
+---> Local-exec is useful for local automation or notifications, whereas remote-exec is used for configuring
+  servers or installing software on remote instances.
+
+8) How do you perform Terraform state locking in a team environment?
+- In a team environment, Terraform state locking prevents multiple engineers from modifying the state
+  simultaneously, which could cause corruption. We achieve this by using remote backends like S3 with 
+  DynamoDB for locking or Terraform Cloud, which automatically handles locks. This ensures safe, 
+  coordinated infrastructure changes across teams.
+
+9) What is `terraform import` used for? Any limitations? 
+-> Refer notes for sample script
+- Terraform import is used to bring existing infrastructure under Terraform management by updating the 
+  state file. It allows Terraform to track and manage resources created outside of Terraform. However, 
+  import only updates the state; it does not generate Terraform configuration automatically, handles one
+  resource at a time, and may require careful handling of dependencies.
+
+10) How do you manage multiple environments (dev/stage/prod) in Terraform?
+- I manage multiple environments in Terraform using a modular approach. I keep reusable infrastructure 
+  logic in modules (like VPC, EC2, RDS), and then reference these modules in environment-specific
+  directories (dev, stage, prod).
+- Each environment has its own tfvars file with unique parameters (like instance size, CIDR ranges, or 
+  scaling configs). This ensures consistency across environments while still allowing flexibility.
+- Additionally, I configure a separate remote backend (e.g., S3 + DynamoDB) per environment to keep 
+  state isolated and avoid conflicts. This way, teams can deploy independently without risk of overwriting
+  another environment’s state.
+
+11) Explain the difference between `depends_on` and implicit dependency.
+- Terraform automatically creates implicit dependencies when one resource references another. 
+  For example, if a subnet uses a VPC ID, Terraform knows the VPC must be created first.
+- However, sometimes there is no direct reference but still a required order. In that case, we use 
+  depends_on to explicitly define the dependency.
+- I usually prefer implicit dependencies because they keep code clean, but I use depends_on in special 
+  cases — like when running provisioners, creating null resources, or when a resource has a hidden 
+  dependency not visible in attributes.
+
+12) What are the best practices for writing reusable Terraform modules?
+- When writing reusable Terraform modules, I follow best practices such as keeping modules small and 
+  focused, using input variables for flexibility, and exposing useful outputs. I also enforce version
+  pinning, provide clear documentation, and validate code with terraform validate and tflint.
+- I structure modules with main.tf, variables.tf, and outputs.tf for clarity, and always design them to 
+  support multiple environments (dev/stage/prod). This ensures consistency, reusability & maintainability
+  across projects.
+
+13) Can two Terraform modules reference the same remote backend?
+- 
+
+14) How do you handle Terraform drifts?
+- Terraform drift occurs when infra changes outside of Terraform. I usually detect drift by running 
+  terraform plan, which compares the real infra with the state file. In CI/CD, I automate drift detection
+  so unexpected changes are caught early.
+- To handle drift, I either reapply Terraform to restore the desired state or, if the manual change was
+  intentional, update the Terraform code accordingly. In some cases, I use terraform import or state 
+  manipulation to bring Terraform in sync. I also follow best practices like limiting manual console
+  changes, enabling drift detection in Terraform Cloud, and enforcing IaC through pipelines.
+- To prevent drift, I enforce restricted IAM permissions, use Terraform Cloud’s drift detection, and 
+  promote strict Infrastructure-as-Code practices
+
+15) How do you integrate Terraform into a CI/CD pipeline?
+- I integrate Terraform into CI/CD pipelines by automating all stages of infrastructure provisioning. 
+  The pipeline checks out code, runs terraform fmt and validate, then terraform init to connect to a
+  remote backend. Next, it executes terraform plan and outputs the plan for review. For production, a 
+  manual approval stage is included. Finally, the pipeline runs terraform apply to provision or update
+  resources.
+
+16) What’s the difference between `terraform taint` and `terraform destroy`?
+- terraform taint is used when a resource is unhealthy or misconfigured; it marks the resource for
+  replacement. On the next terraform apply, Terraform will destroy and recreate only that resource while
+  leaving others untouched.
+- terraform destroy, on the other hand, immediately destroys all resources in the current state 
+  (or targeted resources if -target is used). It's usually used to tear down an environment entirely.
+
+17) Describe a real-world issue you faced with Terraform and how you resolved it.
+- In production, I’ve faced several Terraform challenges. One time, a resource block was accidentally
+  removed, which could have deleted an S3 bucket. I used terraform plan to verify, reverted the change,
+  and applied safely. Another time, multiple engineers were using local state, causing corruption; 
+  migrating to a remote backend with locking resolved it. I’ve also handled provider version conflicts 
+  during Terraform upgrades by testing in dev, updating required providers, and validating all modules 
+  before production deployment. These experiences taught me the importance of state management, CI/CD
+  safety checks, and controlled testing before production changes.
+
+18) conditions in terraform
+- In a multi-environment setup, I used ternary expressions and count-based resource creation to provision
+  larger EC2s in production, skip S3 buckets in dev, and dynamically add security group rules only when 
+  required. This reduced code duplication and made modules reusable across environments.
+--> instance_type = var.environment == "prod" ? "t3.micro" : "t3.small"
+
+
+-------
+DOCKER:|
+-------
+ADD vs COPY
+====
+COPY is a straightforward instruction used for copying files and directories from the 
+local build context to a specified destination within the Docker image.
+syntax:
+COPY <src> <dest>
+
+ADD can perform the same file and directory copying as COPY, but it also includes enhanced features.
+syntax:
+ADD <src> <dest>
+Key difference:
+COPY = simple file copy
+ADD = copy + optional auto-extract + URL download
+
+------------
+KUBERNETES:|
+------------
+1) during an upgrade, how does k8s know that which pods are older and newer version and recreate them
+- Kubernetes knows which pods are older or newer by looking at the pod-template-hash label 
+  (derived from the pod spec in the Deployment). 
+  Each Deployment revision has a unique hash → old ReplicaSet vs new ReplicaSet. T
+  The Deployment controller then replaces old pods with new ones in a controlled manner.
+
+2) How do you expose a Kubernetes application to external traffic?
+- In Kubernetes, we can expose applications externally in multiple ways. For simple testing, we use 
+  NodePort which opens a fixed port on every node. In cloud environments, we typically use a LoadBalancer
+  Service that provisions a cloud LB like AWS ELB or GCP LB. For more advanced scenarios, we use Ingress
+  with an Ingress Controller like NGINX or AWS ALB, which allows us to manage routing, TLS termination,
+  and host/path-based traffic rules. In my current projects, we prefer Ingress for production workloads 
+  since it provides flexibility, security, and scalability.
+
+3) What is the difference between Deployment and StatefulSet in Kubernetes?
+- A Deployment is used for stateless applications where Pods are interchangeable, like web servers or APIs.
+  Pods don’t need stable identities or storage, and scaling is fast. 
+- A StatefulSet, on the other hand, is used for stateful workloads like databases, where each Pod needs a
+ stable identity, persistent storage, and ordered scaling. 
+- For example, in my projects, we deploy microservices using Deployments, while for MongoDB clusters or 
+  Kafka brokers, we rely on StatefulSets to maintain data consistency and pod identity.
+
+4) 
