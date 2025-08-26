@@ -17,7 +17,16 @@ ku rollout undo deployment/nginx --to-revision=3 -> rollback to specific version
 ku get nodes --show-labels
 ku taint nodes ip-192-168-48-179.ec2.internal hardware=gpu:NoExecute
 ku taint nodes ip-192-168-48-179.ec2.internal hardware=gpu:NoExecute-
-kubectl logs <pod-name> --previous
+
+Logs:
+kubectl logs <pod-name> -> for single container
+kubectl logs <pod-name> -c <container-name> -> if multiple containers
+kubectl logs -f <pod-name> or use tail -f -> follow logs in real-time
+kubectl logs --previous <pod-name> -> View Logs for Previous Instance of a Pod
+
+
+
+
 
 Below commands for kube config:
 kubectl config view

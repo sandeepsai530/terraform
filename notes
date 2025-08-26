@@ -543,6 +543,60 @@ docker multi stage builds are primarily used to create smaller, more optimized i
 what if underlying docker server crashes?
 - we need to maintain multiple docker hosts. you need some orchestrator to manage all the docker hosts. docker swarm is the native orchestrator.
 
+Kubernetes Architecture:
+-  Kubernetes has 2 main planes
+   Control plane(Master components) - responsible for cluster management & decisons.
+   Data plane(Worker node components) - responsible for running application workloads.
+   Control plane components:
+   - API Server(kube-apiserver):
+     Role: Central entry point to the cluster.
+     Exposes Kubernetes REST API (all kubectl and SDKs talk to this).
+     Handles authentication, authorization, admission control.
+     Acts as the front-end of Kubernetes.
+
+   - etcd:
+     Role: Distributed key-value store.
+     Stores all cluster state & configurations (Pods, Secrets, ConfigMaps, etc.).
+     Needs to be backed up regularly.
+     High availability is critical (usually runs in odd-number quorum). 
+
+   - Scheduler(kube-scheduler):
+     Role: Decides which node a Pod runs on.
+     Scheduling decisions consider:
+     Resource requirements (CPU/memory).
+     Node labels, affinity/anti-affinity.
+     Taints and tolerations.
+     Topology constraints (zones, racks, etc.).  
+
+   - Controller Manager (kube-controller manager):
+     Role: Runs controllers that enforce desired state.
+     Examples:
+     Node Controller → detects node failures.
+     ReplicaSet Controller → ensures the right number of Pods.
+     Endpoints Controller → updates Services when Pods change.
+
+   - Cloud Controller Manager (if using cloud providers)
+     Role: Integrates with underlying cloud services.
+     Examples:
+     Create LoadBalancers when you create a Service of type LoadBalancer.
+     Attach volumes to nodes.  
+
+   Worker node components: 
+   - kubelet:
+     Role: Node agent that ensures containers are running.
+     Talks to API Server → gets Pod specs and runs them using container runtime.
+     Reports back node & pod status.
+
+   - kube-proxy:
+     Role: Handles networking and Service discovery.
+     Maintains iptables/IPVS rules for load balancing traffic across Pods.
+     Ensures Services (ClusterIP, NodePort, LoadBalancer) work properly. 
+
+   - Container Runtime( Docker, containerd, CRI-O ):
+     Role: Runs the actual containers inside Pods.
+     Kubernetes itself doesn’t run containers; 
+     it delegates this to the runtime via Container Runtime Interface (CRI). 
+
 eksctl vs kubectl:
 ------------------
 eksctl used for cluster creation , manage and delete.
@@ -597,6 +651,17 @@ configMap allow you to externalize configuration from your container images. you
 - environment variables
 - command line arguments
 - mounted volumes(files)
+From ChatGpt:
+- Used to store non-sensitive configuration data (key-value pairs, files, or environment variables).
+- Example: application URLs, feature flags, environment names.
+- Data is stored in plain text in etcd.
+- Can be mounted into Pods as env variables or config files.
+
+Secrets:
+- Used to store sensitive data (passwords, tokens, certificates).
+- Data is stored in etcd in base64 encoded form (not encrypted by default).
+- Can be integrated with KMS or external secret managers for encryption.
+- Access is tighter — RBAC can restrict access to Secrets.
 
 Services:
 Service allow different applications to communicate eachother internally or externally.
@@ -708,6 +773,11 @@ Deployment vs StatefulSet:
 - PV and PVC are mandatory for statefulset.
 - pods in statefulset create in orderly manner with static names. statefulset-0, statefulset-1 etc
 
+Liveness and Readiness probes:
+- Liveness probes determine if a container is alive and should be restarted if unhealthy.
+- readiness probes determine if a container is ready to serve traffic and temporarily remove it       from Service endpoints if not ready. 
+- Liveness is for self-healing, readiness is for graceful traffic management. They can use HTTP, TCP, or exec commands and are configured with initial delays and periods for polling.
+
 Autoscaling:
 - Vertical scaling: 2CPU, 4GB, 20GB HDD --> 4CPU, 8GB, 50GB HDD
 - Horizontal scaling: create another server with 2CPU, 4GB, 20GB HDD and add to LB.
@@ -734,6 +804,10 @@ kubernetes resources:
 - pod affinity and pod anti affinity
 - ingress controller and Ingress resource
 
+HPA vs VPA:
+- HPA scales applications out/in by changing the number of Pods, best for stateless, horizontally    scalable workloads. 
+- VPA scales applications up/down by changing Pod CPU/memory resources, best for stateful or compute-heavy workloads. 
+- In production, many teams use HPA + VPA together for full elasticity.
 
 common errors in k8s:
 - ErrImagePull - if node is not able to pull the image

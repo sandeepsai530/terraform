@@ -32,8 +32,6 @@ My Role in the Project:|
 - Collaborating with developers to optimize application performance and reduce deployment failures.
 - Managing drift detection in Terraform and enforcing infra consistency via CI/CD."*
 
-
-
 ----
 GIT:|
 ----
@@ -273,6 +271,32 @@ ADD = copy + optional auto-extract + URL download
 ------------
 KUBERNETES:|
 ------------
+Q) What is a Pod in Kubernetes, and how is it used?
+-  A Pod in Kubernetes is the smallest deployable unit that encapsulates one or more containers.Containers
+   in a Pod share the same network namespace and storage volumes, making it easy for them to communicate
+   and work together. Typically, we use single-container Pods, but in cases where multiple tightly coupled
+   containers need to run together—like a main application and a sidecar—they are placed in the same Pod.
+   Pods are usually not created directly; instead, we use higher-level controllers like Deployments or 
+   StatefulSets to manage them for scaling and self-healing.
+
+Q) Explain each major component of Kubernetes and its role.
+-  Kubernetes is made up of control plane components and worker node components.
+   The control plane includes the API Server, which is the main entry point; 
+   etcd, which stores cluster state; 
+   the Scheduler, which decides where Pods run; 
+   and the Controller Manager, which ensures the desired state of resources.
+
+   On worker nodes, we have kubelet, which runs containers, 
+   kube-proxy for networking, 
+   and a container runtime like containerd. 
+   Additionally, add-ons like CoreDNS, Ingress Controller, and Metrics Server provide service discovery,
+   traffic management, & monitoring. Together, these components allow k8s to orchestrate containers at scale.
+
+Q) Deployment vs StatefulSet vs DaemonSet
+-  Deployments are for stateless apps with identical Pods, 
+   StatefulSets are for stateful apps needing stable identities and persistent storage, and 
+   DaemonSets ensure one Pod runs on every node — typically for monitoring, logging, or security.
+
 1) during an upgrade, how does k8s know that which pods are older and newer version and recreate them
 - Kubernetes knows which pods are older or newer by looking at the pod-template-hash label 
   (derived from the pod spec in the Deployment). 
@@ -295,4 +319,143 @@ KUBERNETES:|
 - For example, in my projects, we deploy microservices using Deployments, while for MongoDB clusters or 
   Kafka brokers, we rely on StatefulSets to maintain data consistency and pod identity.
 
-4) 
+4) What is a ConfigMap, and how is it different from a Secret?
+-  A ConfigMap is used to store non-sensitive configuration data like environment names or feature flags.
+-  while a Secret is specifically designed for sensitive information like passwords, API tokens, and 
+   certificates. 
+-  The key difference is that ConfigMaps store data in plain text, whereas Secrets are base64 encoded and
+   can be encrypted with KMS. In practice, I use ConfigMaps for application configs and Secrets for 
+   database credentials or TLS certificates, ensuring strict RBAC access.
+
+5) how do you perform secrets rotation in kubernetes?
+-  In Kubernetes, I avoid hardcoding static secrets and instead integrate with an external secrets manager
+   like AWS Secrets Manager or HashiCorp Vault. 
+-  I use the External Secrets Operator or the Secrets Store CSI driver to sync secrets into Kubernetes.
+   This allows credentials such as database passwords to rotate automatically, while the application picks
+   them up without manual intervention. 
+-  For TLS certs, I rely on cert-manager for automatic renewal. This way, secret rotation is automated, 
+   secure, and downtime-free.
+
+6) what is headless service?
+-  A Headless Service is a Kubernetes Service without a ClusterIP. It doesn’t load-balance traffic but 
+   instead exposes the Pod IPs directly. We use it with StatefulSets or databases like Cassandra or Kafka
+   where each Pod needs a stable identity and direct communication with peers. In my project, a Headless
+   Service allowed our Cassandra cluster Pods to discover each other and maintain the stateful cluster.
+
+7) What is persistent volume and persistent volume claim?
+-  A PersistentVolume (PV) is a piece of storage in the cluster, provisioned by an admin or dynamically 
+   via StorageClass.
+-  A PersistentVolumeClaim (PVC) is a user or application’s request for storage. Kubernetes binds a PVC 
+   to a matching PV, allowing Pods to use persistent storage independently of Pod lifecycle.
+
+8) What if there are multiple PVCs and a single PV?
+-  A PV can only bind to one PVC at a time (unless it supports ReadWriteMany).
+   Kubernetes will match based on size and access mode.
+
+9) CrashLoopBackOff error?
+-  CrashLoopBackOff happens when a container keeps crashing after startup. 
+-  To troubleshoot, I first check kubectl get pods for restart count, 
+   then inspect logs using kubectl logs (including --previous for earlier attempts). 
+-  Next, I describe the Pod (kubectl describe pod) to check events, image issues, mount errors, 
+   or probe failures. 
+-  I verify environment variables, ConfigMaps, secrets, and resource limits, and sometimes test the 
+   container locally to isolate application-level problems. 
+-  Finally, I adjust liveness/readiness probes or fix misconfigurations before redeploying.
+
+10) What does OOMKilled mean, and what are the possible causes?
+-  OOMKilled means the container was terminated by the kernel because it exceeded its memory limit. 
+-  Common causes include insufficient memory limits, memory leaks in the application, processing large 
+   data payloads, or improper JVM/application memory configuration. 
+-  To fix it, I check the Pod description and logs, adjust memory requests/limits, monitor memory usage,
+   and optimize the application to prevent excessive memory consumption.
+
+11) ErrImagePull / ImagePullBackOff?
+-  ErrImagePull occurs when Kubernetes fails to pull a container image, usually due to an incorrect image
+   name, tag, missing image in registry, or missing credentials for a private registry. 
+-  ImagePullBackOff happens when Kubernetes retries pulling the image multiple times and is backing off. 
+-  To troubleshoot, I describe the Pod (kubectl describe pod <pod>), verify the image name/tag, ensure 
+   network access, and configure imagePullSecrets if using a private registry.
+
+12) How can you add a Secret in a particular YAML file? 
+-  To add a Secret in k8s, you first define it as a Secret resource in YAML with base64-encoded values. 
+   Then, in the Pod YAML, you can either reference it as environment variables using 
+   env.valueFrom.secretKeyRef or mount it as a volume. 
+   This allows containers to securely access sensitive data without hardcoding credentials in the Pod spec.
+
+13) Explain RoleBinding and ClusterRoleBinding.
+-  RoleBindings are namespaced and grant a Role or ClusterRole within that namespace. 
+-  ClusterRoleBindings are cluster-scoped and grant a ClusterRole across all namespaces and cluster 
+   resources. 
+-  Use RoleBinding for per-namespace least-privilege access (e.g., an app’s SA in dev), and 
+   ClusterRoleBinding for cluster-wide needs (operators, org-wide viewer roles).
+
+14) Deployment strategies?
+-  6 key deployment strategies ⬇️
+   1️⃣ Recreate – Simple but comes with downtime
+   2️⃣ Rolling Update – Gradual shift, no downtime
+   3️⃣ Shadow – Test new versions silently in production
+   4️⃣ Canary – Release to a small percentage first
+   5️⃣ Blue-Green – Two environments, zero downtime
+   6️⃣ A/B Testing – Compare user response to different versions
+
+-----
+AWS:|
+-----
+1) Your EC2 instance in a private subnet needs to download packages without a NAT Gateway. 
+   What alternatives exist?
+-  If an EC2 in a private subnet needs to download packages without a NAT Gateway, I have several 
+   alternatives. The preferred method is to use VPC endpoints, such as an S3 Gateway endpoint, so the 
+   instance can securely fetch packages stored in S3. Another option is to pre-download packages into S3
+   or a private repository accessible via VPC endpoints. If VPC endpoints aren’t sufficient, we can deploy
+   a proxy EC2 in a public subnet to route traffic, or use SSM Run Commands and Systems Manager to install
+   packages without direct internet access. These approaches avoid NAT GW costs while maintaining security.
+
+2) How would you set up geolocation-based routing using AWS services?
+-  To implement geolocation-based routing in AWS, I deploy the application in multiple regions and use 
+   Route 53 with a Geolocation Routing Policy. Each DNS record is associated with a continent, country,
+   or region, and requests from users are routed to the closest endpoint. I also set up a default record
+   to handle unmatched locations. For production, I combine this with Route 53 health checks to ensure
+   failover if a regional endpoint is down, and optionally integrate with CloudFront for global caching 
+   and improved latency.
+
+3) What is a Pre-signed URL?
+-  A Pre-signed URL is a temporary,secure link that gives time-limited access to an object in an S3 bucket.
+-  Generated by someone who already has permission to access the object (via IAM role/user).
+-  Useful for sharing private objects without making the bucket public.
+
+4) different S3 bucket policies
+-  Public Read-Only Access
+-  Restrict Access to Specific IAM Users or Roles
+-  Restrict Access by IP Address
+-  Enforce Encryption (SSE-S3 or SSE-KMS)
+-  Cross-Account Access
+-  Restrict Access to VPC Endpoint
+-  Logging Bucket Policy (for ELB/CloudTrail logs)
+
+5) What are S3 access points?
+-  Instead of using the bucket URL directly, you create different access points.
+-  Each access point has its own name, URL, and access policy.
+-  This makes it easier to manage who can access what inside a big bucket.
+
+6) 
+
+
+---------
+GENERAL:|
+---------
+
+1) A developer accidentally pushed sensitive AWS credentials into the public GitHub repository. 
+   What immediate actions would you take?
+-  If a developer accidentally pushed AWS credentials to a public GitHub repository, my first action would
+   be to immediately revoke or rotate the exposed credentials to prevent misuse. 
+-  Next, I would remove the secrets from the Git history using tools like BFG Repo Cleaner and force-push
+   the cleaned repository. 
+-  I would audit CloudTrail logs to check for any suspicious activity and rotate any dependent credentials
+   if necessary. 
+-  Finally, I would implement preventive measures such as using Secrets Manager, pre-commit hooks, and 
+   scanning tools to avoid future incidents.
+
+2) 
+
+Interview questions by
+--  Sudheer Medaramettla
