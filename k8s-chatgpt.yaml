@@ -1,6 +1,34 @@
+#what is pod?
+#“A Pod is the smallest deployable unit in Kubernetes. It wraps one or more containers that need to run 
+#together. For example, in one project I ran a Java app container along with a Fluentd sidecar inside the
+#same pod to handle logs. Unlike VMs, pods are lightweight and disposable.”
+
+#what is replicaset?
+#“A ReplicaSet makes sure a specified number of pod replicas are always running. In practice, I rarely 
+#create it directly since Deployments manage ReplicaSets automatically. For instance, when I scaled a 
+#Deployment from 2 to 4 replicas, Kubernetes created a new ReplicaSet in the background.”
+
+#what is RBAC?
+#“RBAC controls what users and service accounts can do in Kubernetes. For instance, I gave the Jenkins 
+#service account only deployment permissions in the dev namespace, so it couldn’t accidentally delete 
+#cluster-wide resources. It’s all about enforcing least privilege.”
+
+#what is node?
+#“A Node is a worker machine that runs pods. In EKS, it’s basically an EC2 instance. For example, I 
+#labeled GPU nodes in one project, and then used node selectors so ML workloads would only run on those
+#GPU nodes.”
+
+#what is CRD?
+#“A CRD extends Kubernetes with new resource types. For example, ArgoCD defines an Application CRD to 
+#manage GitOps deployments. I’ve worked with CRDs when installing operators like Istio or Prometheus — 
+#they make Kubernetes extensible beyond built-in resources.”
+
+
 # ------------------------
 # Namespace
 # ------------------------
+#“A Namespace is a logical grouping of resources. I used them to separate dev, QA, and prod environments
+#within the same cluster. Namespaces also make it easier to apply RBAC and quotas per environment.”
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -10,6 +38,10 @@ metadata:
 # ------------------------
 # ResourceQuota (per-namespace limits)
 # ------------------------
+#“A ResourceQuota sets overall limits for a namespace, while LimitRange sets per-pod or per-container 
+#limits. For example, I applied a quota in the dev namespace to restrict it to 10 pods and 4 CPUs total, 
+#and a LimitRange so each pod must request at least 100Mi of memory. This prevents resource abuse.”
+
 apiVersion: v1
 kind: ResourceQuota
 metadata:
@@ -47,6 +79,12 @@ spec:
 # ------------------------
 # ServiceAccount
 # ------------------------
+#“A ServiceAccount in Kubernetes provides an identity for pods or processes to interact with the k8s API.
+#Unlike a user account, it’s meant for workloads, not humans.”
+#“For example, when I set up Jenkins pipelines to deploy apps on EKS, I created a ServiceAccount with 
+#RBAC permissions limited to deployments and services. Jenkins pods then used that ServiceAccount to apply
+#manifests securely.”
+
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -86,6 +124,29 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 
 ---
+#------------------------
+# StorageClass
+#------------------------
+#“A StorageClass defines how storage is provisioned dynamically. For example, I created a StorageClass in
+# EKS that uses AWS gp3 volumes. Whenever a PVC was created, Kubernetes automatically provisioned an EBS
+# volume — no manual PV needed.”
+
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gp3-storage
+provisioner: ebs.csi.aws.com
+parameters:
+  type: gp3
+  fsType: ext4
+  encrypted: "true"
+  iops: "3000"     # Optional: Customize IOPS
+  throughput: "125" # Optional: Customize throughput (MB/s)
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+
+
+---
 # ------------------------
 # PersistentVolume
 # ------------------------
@@ -104,6 +165,10 @@ spec:
 # ------------------------
 # PersistentVolumeClaim
 # ------------------------
+#“A PersistentVolume represents storage in the cluster, and a PersistentVolumeClaim is a request by a pod
+# to use that storage. For instance, in one project I created a PVC of 20Gi for a MySQL StatefulSet, which
+# Kubernetes dynamically provisioned as an AWS EBS volume.”
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -119,6 +184,10 @@ spec:
 # ------------------------
 # Deployment
 # ------------------------
+##“A Deployment manages a set of identical pods, ensuring the desired number of replicas are running. In a
+#recent project, I used a Deployment to run 3 replicas of a web app, allowing for rolling updates with 
+#zero downtime. If a pod crashes, the Deployment automatically creates a new one.”
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -152,6 +221,11 @@ spec:
 # ------------------------
 # StatefulSet
 # ------------------------
+#“StatefulSet is like a Deployment but used for stateful apps that need persistent storage and stable 
+#identity, like databases. For example, in one project I deployed Kafka using StatefulSet so each broker
+#had a fixed hostname and its own PVC. Unlike Deployment, StatefulSet pods scale in order and don’t get 
+#random names.”
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -221,6 +295,10 @@ spec:
 # ------------------------
 # DaemonSet
 # ------------------------
+#“A DaemonSet ensures that a copy of a pod runs on every node in the cluster. I used this for deploying 
+#Prometheus Node Exporter so that every node could expose system metrics. The nice part is when a new node
+#joins, the DaemonSet automatically schedules the pod there.”
+
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -244,6 +322,10 @@ spec:
 # ------------------------
 # Job
 # ------------------------
+#“A Job is used to run pods until a task completes successfully. For example, I set up a Job to run a 
+#one-time database migration script during an upgrade. Unlike Deployments, Jobs don’t keep pods running 
+#forever — they exit after completion.”
+
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -263,6 +345,9 @@ spec:
 # ------------------------
 # CronJob
 # ------------------------
+#“A CronJob runs Jobs on a time schedule, just like Linux cron. In my last project, I used a CronJob to
+# trigger nightly database backups at midnight. If a pod fails, Kubernetes retries it on the next schedule.”
+
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -284,6 +369,10 @@ spec:
 # ------------------------
 # Service
 # ------------------------
+#“A Service exposes pods and gives them a stable network endpoint. For example, I used a ClusterIP service
+# for internal microservices and a LoadBalancer service to expose my frontend to the internet via AWS ELB.
+# Unlike pods, Services don’t change IPs, so they decouple consumers from pod lifecycles.”
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -301,6 +390,10 @@ spec:
 # ------------------------
 # Ingress
 # ------------------------
+#“An Ingress provides HTTP/HTTPS routing into the cluster. For example, in one project we used NGINX 
+#Ingress Controller to expose shop.example.com to the frontend service and api.example.com to the backend
+#service, all behind a single load balancer. It also handled SSL termination.”
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -323,6 +416,10 @@ spec:
 # ------------------------
 # NetworkPolicy
 # ------------------------
+#“A NetworkPolicy defines which pods can communicate with each other. For example, I restricted access so
+#only frontend pods could talk to backend pods, and everything else was denied. This gave us a 
+#zero-trust model inside the cluster.”
+
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -350,6 +447,15 @@ spec:
 # ------------------------
 # HorizontalPodAutoscaler
 # ------------------------
+#“HPA automatically scales the number of pods based on CPU, memory, or custom metrics. In one of my 
+#projects, our frontend pods scaled from 3 to 12 during peak traffic. Once load dropped, HPA scaled them
+#back down, saving costs.”
+
+#“VPA automatically adjusts CPU and memory requests/limits for pods. I used it for a backend service where
+# traffic was unpredictable — it increased memory during spikes, then tuned it down to save resources.
+# Unlike HPA, VPA changes resource size, not replica count.”
+
+
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -405,6 +511,10 @@ spec:
 # ------------------------
 # ConfigMap
 # ------------------------
+#“A ConfigMap is used to inject non-sensitive configuration into pods. For example, I stored environment
+# variables like APP_ENV=prod and mounted them into my application container. This way, I could reuse the
+# same image across dev, QA, and prod with different configs.”
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -418,6 +528,10 @@ data:
 # ------------------------
 # Secret
 # ------------------------
+#“A Secret is similar to a ConfigMap but is meant for sensitive data like passwords or API keys. For
+# example, I stored the database credentials in a Secret and mounted them as environment variables in my
+# backend pods. In production, I integrate Secrets with AWS Secrets Manager for extra security.”
+
 apiVersion: v1
 kind: Secret
 metadata:
@@ -461,3 +575,26 @@ spec:
               key: DB_PASS
       ports:
         - containerPort: 80
+
+#
+
+Pods 
+Deployments
+ReplicaSet
+StatefulSet
+DaemonSet
+jobs
+cronjob
+ConfigMap & Secrets
+PV & PVCs
+StorageClass
+Services
+Ingress
+Network policies
+RBAC 
+Resource Quotas & Limit Ranges
+pod security admission  
+Namespaces
+Nodes 
+HPA & VPA & Cluster Autoscaler
+custom resource definations 

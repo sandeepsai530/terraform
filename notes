@@ -3,6 +3,16 @@ du vs df
 
 connect via ssh - ssh -i ~/downloads/vpn.pem ec2-user@ip-address
 
+How to resize the EBS volume for an EC2 instance?
+- create new volume or resize the volume which is running.
+- attach new volume to the ec2 instance
+- lsblk
+- df -hT
+- sudo growpart /dev/xvda 1
+- sudo resize2fs /dev/xvda1
+- df -hT
+
+
 Topics to cover:
 - why terraform? advantages
 terraform commands:
@@ -26,7 +36,7 @@ Mainly we need to remember four components while writing HCL scripts.
 - variable block
 - output block
 
-Steps to consider for creating a EKS cluster usinf terraform(Explained by Abhishek Veeramalla)
+Steps to consider for creating a EKS cluster using terraform(Explained by Abhishek Veeramalla)
 - iam role, add policy and create cluster
 - iam role, add policy and create nodegroup
 Note: refer video by Abhishek Veeramalla from Udemy 41 session
@@ -59,7 +69,7 @@ Number of ways variables can be defined:
   - default values
   - user prompt/command prompt
 
-if declared as below the n variable is considered as mandatory
+if declared as below then variable is considered as mandatory
 variable "sg_id" {
 }
 

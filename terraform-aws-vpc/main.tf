@@ -70,7 +70,7 @@ resource "aws_subnet" "database_subnet" {
   )
 }
 
- resource "aws_eip" "nat" {
+resource "aws_eip" "nat" {
     domain = "vpc"
 }
 

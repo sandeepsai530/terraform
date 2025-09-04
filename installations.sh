@@ -48,6 +48,9 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip awscliv2.zip
 sudo ./aws/install
 
+#GO
+sudo apt install golang-go -y
+
 #EKSCTL
 ARCH=amd64
 PLATFORM=$(uname -s)_$ARCH
@@ -68,7 +71,14 @@ eksctl version
 attach IAM role to ec2 instance
 git clone https://github.com/sandeepsai530/terraform.git
 eksctl create cluster --config-file=eks.yaml
-aws eks update-kubeconfig --name expense1 --region us-east-1
+[ OR ]
+eksctl create cluster --name demo-cluster --region us-east-1
+
+eksctl delete cluster --name demo-cluster --region us-east-1
+
+aws eks update-kubeconfig --name demo-cluster --region us-east-1
+
+aws eks update-kubeconfig --name my-eks-cluster --region us-east-1
 eksctl delete cluster --config-file=eks.yaml
 
 #kubens
@@ -97,3 +107,20 @@ chmod 700 get_helm.sh
 
 #K9S installation
 curl -sS https://webinstall.dev/k9s | bash
+
+#to reduce command line
+code $PROFILE
+function prompt {"$PWD > "}
+function prompt {$(Get-Location -Leaf) + " > "}
+
+#ARGOCD
+
+VERSION=$(curl -L -s https://raw.githubusercontent.com/argoproj/argo-cd/stable/VERSION)
+curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/download/v$VERSION/argocd-linux-amd64
+sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+rm argocd-linux-amd64
+argocd version
+
+kubectl create namespace argocd || true
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'

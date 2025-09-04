@@ -27,3 +27,15 @@ resource "aws_ssm_parameter" "app_alb_sg_id" {
   type  = "String"
   value = module.app_alb_sg.sg_id
 }
+
+resource "aws_ssm_parameter" "eks_control_plane_sg_id" {
+  name  = "/${var.project_name}/${var.environment}/eks_control_plane_sg_id"
+  type  = "String"
+  value = module.eks_control_plane_sg.sg_id
+}
+
+resource "aws_ssm_parameter" "eks_node_sg_id" {
+  name  = "/${var.project_name}/${var.environment}/eks_node_sg_id"
+  type  = "String"
+  value = module.eks_node_sg.sg_id
+}
