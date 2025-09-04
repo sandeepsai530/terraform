@@ -576,25 +576,23 @@ spec:
       ports:
         - containerPort: 80
 
-#
-
-Pods 
-Deployments
-ReplicaSet
-StatefulSet
-DaemonSet
-jobs
-cronjob
-ConfigMap & Secrets
-PV & PVCs
-StorageClass
-Services
-Ingress
-Network policies
-RBAC 
-Resource Quotas & Limit Ranges
-pod security admission  
-Namespaces
-Nodes 
-HPA & VPA & Cluster Autoscaler
-custom resource definations 
+# Pods
+# Deployments
+# ReplicaSet
+# StatefulSet
+# DaemonSet
+# Jobs
+# CronJob
+# ConfigMap & Secrets
+# PV & PVCs
+# StorageClass
+# Services
+# Ingress
+# Network policies
+# RBAC
+# Resource Quotas & Limit Ranges
+# Pod Security Admission
+# Namespaces
+# Nodes
+# HPA & VPA & Cluster Autoscaler
+# Custom Resource Definitions
