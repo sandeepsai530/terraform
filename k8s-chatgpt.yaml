@@ -60,6 +60,9 @@ spec:
 # ------------------------
 # LimitRange (default per-pod/container requests & limits)
 # ------------------------
+#“A LimitRange sets default resource requests and limits for pods or containers in a namespace. For
+# example, I configured a LimitRange in the dev namespace so any pod created there would default to
+# requesting 200m CPU and 256Mi memory, with a max limit of 500m CPU and 1Gi memory.”
 apiVersion: v1
 kind: LimitRange
 metadata:
@@ -95,6 +98,9 @@ metadata:
 # ------------------------
 # Role
 # ------------------------
+#“A Role defines permissions within a specific namespace. For example, I created a Role that allowed
+# read-only access to pods and services in the dev namespace. This way, I could give a monitoring tool
+# access without risking changes to other resources.”
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -109,6 +115,9 @@ rules:
 # ------------------------
 # RoleBinding
 # ------------------------
+#“A RoleBinding assigns a Role to a user or ServiceAccount within a namespace. For example, I created a
+# RoleBinding that gave the Jenkins ServiceAccount deployment permissions in the dev namespace, allowing
+# it to manage pods and services there without affecting other namespaces.”
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -150,6 +159,10 @@ volumeBindingMode: WaitForFirstConsumer
 # ------------------------
 # PersistentVolume
 # ------------------------
+#“A PersistentVolume represents storage in the cluster, and a PersistentVolumeClaim is a request by a pod
+# to use that storage. For instance, in one project I created a PVC of 5Gi for a MySQL StatefulSet, which
+# Kubernetes dynamically provisioned as an AWS EBS volume.”
+
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -264,6 +277,9 @@ spec:
 # ------------------------
 # Headless Service (for StatefulSet)
 # ------------------------
+#“A Headless Service has no cluster IP and is used with StatefulSets to provide stable network IDs.
+# For example, my Kafka StatefulSet used a headless service so each broker pod could be addressed
+# directly by its hostname.”
 apiVersion: v1
 kind: Service
 metadata:
@@ -280,6 +296,9 @@ spec:
 # ------------------------
 # PodDisruptionBudget (for StatefulSet)
 # ------------------------
+#“A PodDisruptionBudget ensures a minimum number of pods stay up during voluntary disruptions like
+# node drains. For example, I set a PDB for my database StatefulSet to require at least 1 pod available,
+# so during maintenance, Kubernetes wouldn’t evict all replicas at once. This helps maintain availability.”
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
@@ -480,6 +499,8 @@ spec:
 # ------------------------
 # Advanced Pod Scheduling (affinity, tolerations, nodeSelector)
 # ------------------------
+#“Node affinity lets you constrain which nodes your pod can run on based on labels. For example, I used
+# node affinity to ensure certain ML workloads only ran on nodes labeled with GPU.”
 apiVersion: v1
 kind: Pod
 metadata:
@@ -546,6 +567,9 @@ data:
 # ------------------------
 # Pod with InitContainer using ConfigMap & Secret
 # ------------------------
+#“An InitContainer runs before the main application container to perform setup tasks. For example, I
+# used an InitContainer to fetch configuration from a ConfigMap and print it out before starting the app.
+# This is useful for initialization logic that must complete before the main container starts.”
 apiVersion: v1
 kind: Pod
 metadata:
