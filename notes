@@ -906,6 +906,14 @@ kubectl taint nodes node1 environment=prod:NoSchedule-
 
 Taints applied at node level and tolerations applied at pod level.
 
+Scheduling options for a deployment:
+- Node selector: "run on nodes with this label". Ex: only run on nodes labeled disktype=ssd
+- Node Affinity: "more flexible version of Node Selector (supports In, NotIn, Exists, etc )". Ex: Run only in region us-east-1
+- Pod Affinity: "Run near another pod". Ex: Run on same node as frontend pods.
+- pod anti-affinity: "run away from another pod". Ex: Avoid node that already runs backend pods.
+- Tolerations: "Allow pod to tolerate taints on certain nodes". Ex: Schedule on node marked     dedicated=critical
+- PriorityClass: Defines which Pods get scheduled first. Ex: “Critical apps” before “regular apps”
+
 Ingress resource:
 -----------------
 Ingress controller is used to provide external access to the applications running in kubernetes. we can set the routing rules through ingress resource either path based or host based. In EKS ingress resourcecan create ALB, Listener, Rule and target group. Ingress is attached to service, so it fetch the pods and add them to target group.
