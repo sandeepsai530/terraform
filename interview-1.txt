@@ -1,0 +1,33 @@
+Capgemini:
+----------
+terraform for_each and count
+describe pipeline
+what all services you worked on AWS
+how does EKS knows when a new image created in ECR
+how you can install software to an instance before its accessible
+how you come to know if the software installed with status code 
+how to display the ip address of the instance
+terraform modules
+different services in kubernetes
+service to service communication
+deployment strategies
+loadbalancer using terraform
+autoscaling group using terraform
+DynamoDB
+Lambda
+API Gateway
+EventBridge
+SNS and SQS
+provisioners
+CloudWatch usecase
+create VPC resource using terraform
+NAT Gateways, subnets, route tables
+RDS
+IAM roles, write terraform script for it
+usecase of IAM in your project
+Helm
+ArgoCD
+terraform drift
+scenarios you create ec2 instances in your project
+what IAM policy you apply for cross region replication
+trust policy

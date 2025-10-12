@@ -23,6 +23,12 @@
 #manage GitOps deployments. I’ve worked with CRDs when installing operators like Istio or Prometheus — 
 #they make Kubernetes extensible beyond built-in resources.”
 
+#Labels and Selectors?
+#“Labels are key-value pairs used to tag objects, while selectors are how Kubernetes finds and groups 
+#those objects. For example, I labeled my frontend pods with app=frontend, env=prod. The Deployment 
+#selector ensured only those pods were managed, and the Service selector routed traffic only to them. 
+#This way, labels and selectors provide loose coupling between resources.”
+
 
 # ------------------------
 # Namespace
@@ -34,6 +40,26 @@ kind: Namespace
 metadata:
   name: demo-namespace
 
+---
+#------------------------
+#annotations
+#------------------------
+#“Annotations are key-value pairs that store non-identifying metadata. For example, I used annotations to
+# add build info and contact details to my deployment manifests. Unlike labels, annotations aren’t used
+# for selection or grouping — they’re just for storing extra info.”
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: annotations
+  namespace: expense
+  annotations:
+    buildURL: "https://jenkins.com/expense/job/backend/23"
+    imageregistry: "http://hub.docker.com/"
+spec:
+  containers:
+  - name: nginx
+    image: nginx
 ---
 # ------------------------
 # ResourceQuota (per-namespace limits)
@@ -105,7 +131,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: demo-role
-  namespace: demo-namespace
+  namespace: dev-namespace
 rules:
   - apiGroups: [""]
     resources: ["pods", "services"]
@@ -599,6 +625,116 @@ spec:
               key: DB_PASS
       ports:
         - containerPort: 80
+---
+# Below explained about labels and selectors
+#-------------------------
+#labels
+#-------------------------
+#“Labels are key-value pairs attached to Kubernetes objects like pods, services, and deployments. They 
+#help organize and select subsets of objects. For example, I labeled my frontend pods with app=frontend 
+#and env=prod. This way, I could easily select all production frontend pods using these labels.”
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: frontend-pod
+  labels:
+    app: frontend
+    env: prod
+    tier: web
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+
+---
+#-------------------------
+#Deployment with selector
+#-------------------------
+#“Selectors are used to filter Kubernetes objects based on their labels. For example, in a Deployment, I
+# used a selector to match pods with the label app=frontend. This way, the Deployment knows which pods to
+# manage.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend   # Must match pod template labels
+      env: prod
+  template:
+    metadata:
+      labels:
+        app: frontend
+        env: prod
+        tier: web
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+
+---
+#-------------------------
+#Service selecting pods by labels
+#-------------------------
+#“A Service uses selectors to route traffic to the appropriate pods. For example, I created a Service that
+# selects pods with the label app=frontend. This way, any traffic to the Service gets load-balanced across
+# all matching frontend pods.”
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend   # Matches labels in pod template
+    env: prod
+  ports:
+    - port: 80
+      targetPort: 80
+
+#Probes in kubernetes?
+#“Probes are health checks for containers. A liveness probe checks if the app is running, while a readiness
+# probe checks if it’s ready to serve traffic. For example, I set up a readiness probe for my web app
+# that hit /health endpoint. If it failed, Kubernetes would stop sending traffic to that pod until it
+# passed again. This helps ensure only healthy pods receive requests.”
+# readiness probe:
+# liveness probe:
+# startup probe:
+#------------------------
+#probes
+#------------------------
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  containers:
+    - name: myapp
+      image: myapp:1.0
+      ports:
+        - containerPort: 8080
+      livenessProbe:
+        httpGet:
+          path: /healthz
+          port: 8080
+        initialDelaySeconds: 10
+        periodSeconds: 5
+      readinessProbe:
+        httpGet:
+          path: /ready
+          port: 8080
+        initialDelaySeconds: 5
+        periodSeconds: 5
+      startupProbe:
+        httpGet:
+          path: /startup
+          port: 8080
+        failureThreshold: 30
+        periodSeconds: 10
 
 # Pods
 # Deployments

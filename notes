@@ -910,6 +910,35 @@ Ingress resource:
 -----------------
 Ingress controller is used to provide external access to the applications running in kubernetes. we can set the routing rules through ingress resource either path based or host based. In EKS ingress resourcecan create ALB, Listener, Rule and target group. Ingress is attached to service, so it fetch the pods and add them to target group.
 
+Ingress Controller: its a kubernetes component(a pod running in your cluster) that watches for ingress objects and configures a reverse proxy (like Nginx, Traefik, HA Proxy etc) to handle routing based on those rules.
+Ingress: defines rules (k8s object)
+ingress controller: listens to those rules and implements them (actual router)
+
+command to verify if ingress controller exists.
+kubectl get pods -A | grep ingress
+
+
+Routing types:
+--------------
+port based routing
+123.456.78.99/81 -> homepage page
+123.456.78.99/82 -> movies page
+123.456.78.99/83 -> songs page
+
+path based routing
+ingress url/home
+ingress url/movies
+ingress url/songs
+
+Benefits on using Ingress controller:
+- cost effective
+- simplified routing
+- tls/ssl management - this can be achieved as ingress controller has centralised mechanism.
+- path and host based routing
+- centrailsed access control
+- supports autoscaling and Load distribution
+
+
 ServiceAccounts:
 Service account is a non-human account, It is pod identity with which it can connect with api server and get access to external services.
 when you create a namespace or every namespace will have default service account.

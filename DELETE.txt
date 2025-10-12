@@ -1,0 +1,150 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-app
+  labels:
+    app: ecommerce
+    tier: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ecommerce
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: ecommerce
+        tier: backend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      # 🟢 Service Account
+      serviceAccountName: ecommerce-sa
+
+      # 🟢 Image Pull Secrets
+      imagePullSecrets:
+        - name: ecr-secret
+
+      # 🟢 Init Container
+      initContainers:
+        - name: init-db-check
+          image: busybox
+          command: ['sh', '-c', 'until nslookup mysql; do echo waiting for db; sleep 5; done;']
+
+      # 🟢 Security Context
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+
+      # 🟢 Affinity & Anti-Affinity
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-type
+                    operator: In
+                    values:
+                      - high-performance
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - ecommerce
+              topologyKey: "kubernetes.io/hostname"
+
+      # 🟢 Tolerations
+      tolerations:
+        - key: "dedicated"
+          operator: "Equal"
+          value: "backend"
+          effect: "NoSchedule"
+
+      # 🟢 Topology Spread Constraints
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: "topology.kubernetes.io/zone"
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: ecommerce
+
+      containers:
+        - name: ecommerce-container
+          image: my-ecr-repo/ecommerce:latest
+          imagePullPolicy: IfNotPresent
+
+          # 🟢 Resources
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+
+          # 🟢 Env Vars
+          env:
+            - name: APP_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: ecommerce-config
+                  key: APP_ENV
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ecommerce-secret
+                  key: DB_PASSWORD
+
+          # 🟢 Probes
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 15
+
+          # 🟢 Volume Mounts
+          volumeMounts:
+            - name: app-storage
+              mountPath: /usr/share/app/data
+            - name: config-volume
+              mountPath: /etc/config
+            - name: secret-volume
+              mountPath: /etc/secret
+
+        # 🟢 Sidecar container (logging/metrics)
+        - name: log-sidecar
+          image: fluent/fluent-bit:latest
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "200Mi"
+          volumeMounts:
+            - name: app-storage
+              mountPath: /var/log/app
+
+      # 🟢 Volumes
+      volumes:
+        - name: app-storage
+          persistentVolumeClaim:
+            claimName: ecommerce-pvc
+        - name: config-volume
+          configMap:
+            name: ecommerce-config
+        - name: secret-volume
+          secret:
+            secretName: ecommerce-secret

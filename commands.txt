@@ -1,3 +1,21 @@
+exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+
+
+DOCKER:
+-------
+sudo usermod -aG docker $USER -> adding $USER to docker group
+ssh-keygen
+vi /etc/hostnames -> to edit the hostname on the console
+vi etc/ssh/ssh/sshd_config -> to edit the sshd configuration file, password authentication
+createuser sonar -> creates sonar user
+sudo init 6
+sudo groupadd sonar
+sudo useradd -c "user to run sonarqube" -d /opt/sonarqube -g sonar sonar
+sudo chown sonar:sonar /opt/sonarqube -R
+
+
+
+
 eksctl create cluster --config-file=eks.yaml
 aws eks update-kubeconfig --name expense --region us-east-1
 eksctl delete cluster --config-file=eks.yaml
@@ -18,6 +36,9 @@ ku get nodes --show-labels
 ku taint nodes ip-192-168-48-179.ec2.internal hardware=gpu:NoExecute
 ku taint nodes ip-192-168-48-179.ec2.internal hardware=gpu:NoExecute-
 
+kubectl get pods -A | grep ingress -> if ingress controller exists in the cluster
+
+
 Logs:
 kubectl logs <pod-name> -> for single container
 kubectl logs <pod-name> -c <container-name> -> if multiple containers
@@ -34,3 +55,5 @@ kubectl config current-context
 kubectl config use-context <context-name>
 aws eks update-kubeconfig --region <region-name> --name <cluster-name>
 kubectl config view
+
+aws eks --region us-east-1 update-kubeconfig --name my-eks-cluster

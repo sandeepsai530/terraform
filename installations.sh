@@ -72,9 +72,9 @@ attach IAM role to ec2 instance
 git clone https://github.com/sandeepsai530/terraform.git
 eksctl create cluster --config-file=eks.yaml
 [ OR ]
-eksctl create cluster --name demo-cluster --region us-east-1
+eksctl create cluster --name my-eks-cluster --region us-east-1
 
-eksctl delete cluster --name demo-cluster --region us-east-1
+eksctl delete cluster --name my-eks-cluster --region us-east-1
 
 aws eks update-kubeconfig --name demo-cluster --region us-east-1
 
