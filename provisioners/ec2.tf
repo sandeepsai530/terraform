@@ -6,11 +6,11 @@ resource "aws_instance" "this" {
     Name = "terraform-demo"
     Purpose ="Terraform-practice"
   }
-  #this is local exec
+  #this is local exec - Runs commands on your local machine, not on the remote instance.
   provisioner "local-exec" {
     command = "echo ${self.private_ip} > inventory"
   }
-
+  #connection block - When you use remote-exec or file, Terraform needs to know how to connect to the resource.
   connection {
     type = "ssh"
     user = "ec2-user"
@@ -18,10 +18,10 @@ resource "aws_instance" "this" {
     host = self.public_ip
   }
 
-  #this is remote exec
+  #this is remote exec - executes this under an ec2 instance 
   provisioner "remote-exec" {
     inline = [ 
-      "sudo dnf install nginx",
+      "sudo dnf install nginx -y",
       "sudo systemctl start nginx"
      ]
   }
@@ -42,6 +42,13 @@ resource "aws_security_group" "allow_tls" {
     ingress {
         from_port = 80
         to_port = 80
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    ingress {
+        from_port = 8080
+        to_port = 8080
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }

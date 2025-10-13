@@ -1,0 +1,13 @@
+3000 - grafana
+8080 - jenkins
+9090 - prometheus
+9100 - node exporter
+22 -   ssh
+3306 - mysql
+80   - http
+443  - https
+25   - smtp
+53   - DNS 
+5432 - postgres
+9000 - sonarqube
+8200 - hashicorp vault
