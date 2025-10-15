@@ -1,0 +1,51 @@
+#cross account s3 buckets communication
+Scenario:
+Account A (Source) — owns Bucket A
+Account B (Destination) — owns Bucket B
+You want to copy or sync data between these two buckets.
+
+- Step 1: Give Permission via Bucket Policy (Destination Account)
+In Account B, attach this bucket policy to Bucket B so Account A can write data into it.
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowAccountAToPutObjects",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::<AccountA-ID>:root"
+      },
+      "Action": [
+        "s3:PutObject",
+        "s3:PutObjectAcl"
+      ],
+      "Resource": "arn:aws:s3:::bucket-b-name/*"
+    }
+  ]
+}
+
+
+🔹 This allows Account A to upload data into Bucket B.
+🔹 Replace <AccountA-ID> and bucket-b-name accordingly.
+
+- Step 2: IAM Role or User Policy in Account A
+In Account A, the IAM Role or User copying data should have permission to read from Bucket A and write to Bucket B.
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["s3:GetObject"],
+      "Resource": "arn:aws:s3:::bucket-a-name/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:PutObjectAcl"],
+      "Resource": "arn:aws:s3:::bucket-b-name/*"
+    }
+  ]
+}
+
+
