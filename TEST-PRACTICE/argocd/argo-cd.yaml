@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-k8s-app           # ArgoCD app name
+  namespace: argocd          # ArgoCD watches this namespace for Applications
+spec:
+  project: default           # Default ArgoCD project
+  source:
+    repoURL: 'https://github.com/sandeepsai530/terraform/TEST-PRACTICE.git'  # Your GitHub repo
+    targetRevision: main      # Branch name (e.g. main/master)
+    path: manifests           # Folder in your repo containing Kubernetes YAMLs
+  destination:
+    server: 'https://kubernetes.default.svc'  # Points to your current cluster
+    namespace: default                         # Where your app will be deployed
+  syncPolicy:
+    automated:                # Enable auto-sync (optional)
+      prune: true             # Delete old resources not in Git
+      selfHeal: true          # Fix drift automatically
+    syncOptions:
+      - CreateNamespace=true  # Auto-create namespace if not exists
