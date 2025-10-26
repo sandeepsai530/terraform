@@ -3,9 +3,11 @@ resource "aws_vpc" "main" {
   instance_tenancy = "default"
   enable_dns_hostnames = var.enable_dns_hostnames
 
+  #expense-dev
   tags = merge(
     var.common_tags,
-    var.vpc_tags, {
+    var.vpc_tags, 
+    {
         Name= local.resource_name
     }
   )
@@ -16,7 +18,8 @@ resource "aws_internet_gateway" "main" {
 
   tags = merge(
     var.common_tags,
-    var.igw_tags, {
+    var.igw_tags, 
+    {
         Name = local.resource_name
   }
   )
